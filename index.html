@@ -1,0 +1,53 @@
+<!DOCTYPE html/>
+<html>
+<head>
+  <title>Continuity - An Unbroken Thought</title>
+</head>
+<body>
+  <div
+    id="main"
+    style="height:100%; width:100%; background-color:gray;">
+    <canvas id="line-canvas" width="1000" height="700" style="border:1px solid black"></canvas>
+  </div>
+
+  <!-- <script src="https://d3js.org/d3-path.v1.min.js"></script>
+  <script src="https://d3js.org/d3-shape.v1.min.js"></script> -->
+  <script>
+    document.getElementById("main").onmousedown = start
+    document.getElementById("main").onmouseup = stop
+
+    var prev = undefined
+
+    var ctx = document.getElementById("line-canvas").getContext("2d")
+    ctx.lineWidth = 2
+    ctx.strokeStyle = "white"
+
+    var timer = undefined
+
+    function record(e) {
+      var curr = [e.offsetX, e.offsetY]
+      if (prev != undefined) {
+        draw(prev, curr)
+      }
+      prev = curr
+    }
+
+    function draw(prevCoor, currCoor) {
+      ctx.beginPath()
+      ctx.moveTo(prevCoor[0], prevCoor[1])
+      ctx.lineTo(currCoor[0], currCoor[1])
+      ctx.stroke()
+    }
+
+    function start() {
+      console.log("Mouse down at: " + Date.now())
+      document.getElementById("main").addEventListener("mousemove", record)
+    }
+
+    function stop() {
+      console.log("Mouse up at: " + Date.now())
+      document.getElementById("main").removeEventListener("mousemove", record)
+    }
+  </script>
+</body>
+</html>
