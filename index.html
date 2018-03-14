@@ -7,25 +7,29 @@
   <div
     id="main"
     style="height:100%; width:100%; background-color:gray;">
-    <canvas id="line-canvas" width="1000" height="700" style="border:1px solid black"></canvas>
+    <canvas id="line-canvas" style="border:1px solid black"></canvas>
   </div>
 
-  <!-- <script src="https://d3js.org/d3-path.v1.min.js"></script>
-  <script src="https://d3js.org/d3-shape.v1.min.js"></script> -->
+  <script src="https://d3js.org/d3-selection.v1.min.js"></script>
   <script>
-    document.getElementById("main").onmousedown = start
-    document.getElementById("main").onmouseup = stop
-
     var prev = undefined
+    var timer = undefined
 
-    var ctx = document.getElementById("line-canvas").getContext("2d")
+    var main = d3.select("div"),
+        height = main.node().clientHeight,
+        width = main.node().clientWidth
+    main.on("mousedown", start)
+    main.on("mouseup", stop)
+
+    var canvas = main.select("canvas")
+      .attr("height", height)
+      .attr("width", width)
+    var ctx = canvas.node().getContext("2d")
     ctx.lineWidth = 2
     ctx.strokeStyle = "white"
 
-    var timer = undefined
-
     function record(e) {
-      var curr = [e.offsetX, e.offsetY]
+      var curr = [d3.event.offsetX, d3.event.offsetY]
       if (prev != undefined) {
         draw(prev, curr)
       }
@@ -39,14 +43,14 @@
       ctx.stroke()
     }
 
-    function start() {
+    function start(e) {
       console.log("Mouse down at: " + Date.now())
-      document.getElementById("main").addEventListener("mousemove", record)
+      main.on("mousemove", record)
     }
 
     function stop() {
       console.log("Mouse up at: " + Date.now())
-      document.getElementById("main").removeEventListener("mousemove", record)
+      main.on("mousemove", null)
     }
   </script>
 </body>
