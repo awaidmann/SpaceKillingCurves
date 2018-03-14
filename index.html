@@ -6,20 +6,33 @@
 <body>
   <div
     id="main"
-    style="height:100%; width:100%; background-color:gray;">
+    style="height:100%; width:100%; background-color:gray;"
+    >
     <canvas id="line-canvas" style="border:1px solid black"></canvas>
   </div>
 
   <script src="https://d3js.org/d3-selection.v1.min.js"></script>
+  <script src="https://d3js.org/d3-path.v1.min.js"></script>
+  <script src="https://d3js.org/d3-shape.v1.min.js"></script>
+  <script src="https://d3js.org/d3-color.v1.min.js"></script>
+  <script src="https://d3js.org/d3-dispatch.v1.min.js"></script>
+  <script src="https://d3js.org/d3-ease.v1.min.js"></script>
+  <script src="https://d3js.org/d3-interpolate.v1.min.js"></script>
+  <script src="https://d3js.org/d3-selection.v1.min.js"></script>
+  <script src="https://d3js.org/d3-timer.v1.min.js"></script>
+  <script src="https://d3js.org/d3-transition.v1.min.js"></script>
+  <script src="https://d3js.org/d3-drag.v1.min.js"></script>
+  <script src="https://d3js.org/d3-zoom.v1.min.js"></script>
   <script>
     var prev = undefined
     var timer = undefined
+    var lineData = []
+
+    var transform = undefined
 
     var main = d3.select("div"),
         height = main.node().clientHeight,
         width = main.node().clientWidth
-    main.on("mousedown", start)
-    main.on("mouseup", stop)
 
     var canvas = main.select("canvas")
       .attr("height", height)
@@ -28,12 +41,33 @@
     ctx.lineWidth = 2
     ctx.strokeStyle = "white"
 
+    var line = d3.line().context(ctx)
+
+    canvas.call(d3.zoom()
+      .on("zoom", zoom)
+      .on("end", end)
+    )
+    canvas.on("mousemove.draw", record)
+
+    function zoom() {
+      ctx.save()
+      ctx.clearRect(0, 0, width, height)
+      transform = d3.event.transform
+      ctx.translate(d3.event.transform.x, d3.event.transform.y)
+      ctx.scale(d3.event.transform.k, d3.event.transform.k)
+      drawForTransform()
+      ctx.restore()
+    }
+
     function record(e) {
-      var curr = [d3.event.offsetX, d3.event.offsetY]
-      if (prev != undefined) {
-        draw(prev, curr)
+      if (d3.event.metaKey) {
+        var curr = [d3.event.offsetX, d3.event.offsetY]
+        if (prev) {
+          draw(prev, curr)
+          lineData.push(normalize(curr, transform))
+        }
+        prev = curr
       }
-      prev = curr
     }
 
     function draw(prevCoor, currCoor) {
@@ -43,14 +77,24 @@
       ctx.stroke()
     }
 
-    function start(e) {
-      console.log("Mouse down at: " + Date.now())
-      main.on("mousemove", record)
+    function drawForTransform() {
+      ctx.beginPath()
+      line(lineData)
+      ctx.stroke()
     }
 
-    function stop() {
-      console.log("Mouse up at: " + Date.now())
-      main.on("mousemove", null)
+    function normalize(coor, t) {
+      return t ? [(coor[0] - t.x)/t.k, (coor[1] - t.y)/t.k] : coor
+    }
+
+    function invertNormalize(coor, t) {
+      return t ? [(coor[0]*t.k + t.x), (coor[1]*t.k + t.y)] : coor
+    }
+
+    function end() {
+      if (lineData.length) {
+        prev = invertNormalize(lineData[lineData.length - 1], transform)
+      }
     }
   </script>
 </body>
