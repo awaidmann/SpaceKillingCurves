@@ -135,7 +135,7 @@
     }
 
     function calculateControlPoints() {
-      var controlPoints = lineData.filter((_, i) => !(i%POINT_FILTER))
+      var controlPoints = lineData.filter((_, i) => !(i%POINT_FILTER) || i == (lineData.length - 1))
 
       return cubicBezierControlPointsFromDataPoints(controlPoints.map(x => invertNormalize(x, transform)))
     }
