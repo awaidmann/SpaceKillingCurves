@@ -24,6 +24,7 @@
   <script src="https://d3js.org/d3-drag.v1.min.js"></script>
   <script src="https://d3js.org/d3-zoom.v1.min.js"></script>
   <script>
+    var POINT_FILTER = 5
     var prev = undefined
     var timer = undefined
     var lineData = []
@@ -129,33 +130,11 @@
     }
 
     function calculateControlPoints() {
-      var diffs = piecewiseDifferentiate(lineData).map((d, i) => [lineData[i], d[1]])
+      var controlPoints = lineData.filter((_, i) => !(i%POINT_FILTER))
 
-      console.log(diffs)
-
-      var approxExtrema = []
-      var lastDiff = [[], 0]
-      for(var d of diffs) {
-        if (Math.sign(lastDiff[1]) != Math.sign(d[1])) {
-          approxExtrema.push([invertNormalize(d[0], transform), d[1]])
-        }
-        lastDiff = d
-      }
-      return cubicBezierControlPointsFromDataPoints(approxExtrema.map(x => x[0]))
+      return cubicBezierControlPointsFromDataPoints(controlPoints.map(x => invertNormalize(x, transform)))
     }
 
-    function piecewiseDifferentiate(data) {
-      return data.map((x, i, arr) => {
-        var diff = 0
-        var next = arr[i]
-        if (arr[i+1] && arr[i-1]) {
-          last = arr[i-1]
-          next = arr[i+1]
-          diff = (next[1]-last[1])/(next[0]-last[0])
-        }
-        return [i, diff]
-      })
-    }
 
     function cubicBezierControlPointsFromDataPoints(dataPoints) {
       // http://www.math.ucla.edu/~baker/149.1.02w/handouts/dd_splines.pdf
