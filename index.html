@@ -80,7 +80,7 @@
 
     function drawForTransform() {
       ctx.beginPath()
-      line(lineData)
+      line(lineData.map(p => [p.x, p.y]))
       ctx.stroke()
     }
 
