@@ -47,11 +47,11 @@
 
     var line = d3.line().context(ctx)
 
-    canvas.call(d3.zoom()
-      .on("zoom", zoom)
-      .on("end", end)
-    )
-    canvas.on("mousemove.draw", record)
+    d3.selection()
+      .on("keydown", setupAltControls)
+      .on("keyup", teardownAltControls)
+
+    setupDraw()
 
     function zoom() {
       ctx.save()
@@ -64,14 +64,12 @@
     }
 
     function record(e) {
-      if (d3.event.metaKey) {
-        var curr = { x: d3.event.offsetX, y: d3.event.offsetY }
-        if (prev) {
-          draw(prev, curr)
-          lineData.push(normalize(curr, transform))
-        }
-        prev = curr
+      var curr = { x: d3.event.offsetX, y: d3.event.offsetY }
+      if (prev) {
+        draw(prev, curr)
+        lineData.push(normalize(curr, transform))
       }
+      prev = curr
     }
 
     function draw(prevCoor, currCoor) {
@@ -126,6 +124,44 @@
         drawControlPoints(controlPoints)
         drawCubicBezier(controlPoints)
       }
+    }
+
+    function setupAltControls() {
+      if (d3.event.metaKey) {
+        setupZoom()
+        teardownDraw()
+      }
+    }
+
+    function teardownAltControls() {
+      if (d3.event.key === "Meta") {
+        teardownZoom()
+        setupDraw()
+      }
+    }
+
+    function setupDraw() {
+      canvas.on("mousedown", () => canvas.on("mousemove", record))
+      canvas.on("mouseup", () => canvas.on("mousemove", null))
+    }
+
+    function teardownDraw() {
+      canvas.on("mousedown", null)
+      canvas.on("mousemove", null)
+      canvas.on("mouseup", null)
+    }
+
+    function setupZoom() {
+      canvas.call(d3.zoom()
+        .on("zoom", zoom)
+        .on("end", end)
+      )
+    }
+
+    function teardownZoom() {
+      canvas
+        .on(".zoom", null)
+        .on(".end", null)
     }
 
   </script>
