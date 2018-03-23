@@ -3,12 +3,9 @@
 <head>
   <title>Continuity - An Unbroken Thought</title>
 </head>
-<body>
-  <div
-    id="main"
-    style="height:100%; width:100%; background-color:gray;"
-    >
-    <canvas id="line-canvas" style="border:1px solid black"></canvas>
+<body onload="init()" onresize="resize()">
+  <div id="main" style="height:100%; width:100%">
+    <canvas id="line-canvas" style="border:1px solid black; background-color:#dfdfdf;"></canvas>
   </div>
 
   <script src="./bezier.js"></script>
@@ -29,28 +26,12 @@
   <script src="https://d3js.org/d3-zoom.v1.min.js"></script>
   <script>
     var POINT_FILTER = 5
-    var prev = undefined
     var currStroke = Promise.resolve([])
     var transform = Promise.resolve()
-
-    var main = d3.select("div"),
-        height = main.node().clientHeight,
-        width = main.node().clientWidth
-
-    var canvas = main.select("canvas")
-      .attr("height", height)
-      .attr("width", width)
-    var ctx = canvas.node().getContext("2d")
-    ctx.lineWidth = 2
-    ctx.strokeStyle = "white"
-
-    var line = d3.line().context(ctx)
-
-    d3.selection()
-      .on("keydown", setupAltControls)
-      .on("keyup", teardownAltControls)
-
-    setupDraw()
+    var canvas,
+      ctx,
+      width = 0,
+      height = 0
 
     function saveStroke(strokePromise) {
       return Promise.all([
@@ -159,6 +140,32 @@
       })
     }
 
+    function resize() {
+      height = d3.select("#main").node().clientHeight
+      width = d3.select("#main").node().clientWidth
+      if (canvas) {
+        canvas
+          .attr("height", height)
+          .attr("width", width)
+      }
+
+      if (ctx) {
+        Promise.all([getStrokes(), transform])
+          .then(res => draw.apply(null, res))
+      }
+    }
+
+    function init() {
+      canvas = d3.select("#line-canvas")
+      resize()
+
+      ctx = canvas.node().getContext("2d")
+      setupDraw()
+
+      d3.selection()
+        .on("keydown", setupAltControls)
+        .on("keyup", teardownAltControls)
+    }
 
     // Event handler setup/teardown
     function setupAltControls() {
