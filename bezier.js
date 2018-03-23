@@ -3,9 +3,8 @@
 function calculateControlPoints(dataPoints) {
   return dataPoints
     ? cubicBezierControlPointsFromDataPoints(
-      dataPoints
-        .filter((_, i) => !(i%POINT_FILTER) || i == (dataPoints.length - 1))
-        .map(x => invertNormalize(x, transform)))
+      dataPoints.filter((_, i) => !(i%POINT_FILTER)
+        || i == (dataPoints.length - 1)))
     : []
 }
 

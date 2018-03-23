@@ -13,6 +13,7 @@
 
   <script src="./bezier.js"></script>
   <script src="./transform.js"></script>
+  <script src="./dataSource.js"></script>
 
   <script src="https://d3js.org/d3-selection.v1.min.js"></script>
   <script src="https://d3js.org/d3-path.v1.min.js"></script>
@@ -29,10 +30,8 @@
   <script>
     var POINT_FILTER = 5
     var prev = undefined
-    var timer = undefined
-    var lineData = []
-
-    var transform = undefined
+    var currStroke = Promise.resolve([])
+    var transform = Promise.resolve()
 
     var main = d3.select("div"),
         height = main.node().clientHeight,
@@ -53,45 +52,53 @@
 
     setupDraw()
 
-    function zoom() {
-      ctx.save()
-      ctx.clearRect(0, 0, width, height)
-      transform = d3.event.transform
-      ctx.translate(d3.event.transform.x, d3.event.transform.y)
-      ctx.scale(d3.event.transform.k, d3.event.transform.k)
-      drawForTransform()
-      ctx.restore()
+    function saveStroke(strokePromise) {
+      return Promise.all([
+          strokePromise
+            .then(calculateControlPoints)
+            .then(setNextStrokes),
+          transform
+        ]).then(res => {
+          var t = res[1]
+          var strokes = res[0].map(b => {
+            return {
+              s0: invertNormalize(b.s0, t),
+              s1: invertNormalize(b.s1, t),
+              b0: invertNormalize(b.b0, t),
+              b1: invertNormalize(b.b1, t)
+            }
+          })
+
+          ctx.clearRect(0, 0, width, height)
+          draw(strokes)
+          return [normalize((strokes[strokes.length - 1] || {}).s1 || {}, t)]
+        })
     }
 
-    function record(e) {
-      var curr = { x: d3.event.offsetX, y: d3.event.offsetY }
-      if (prev) {
-        draw(prev, curr)
-        lineData.push(normalize(curr, transform))
-      }
-      prev = curr
+
+    // Canvas/D3 drawing
+    function draw(strokes) {
+      // ctx.clearRect(0, 0, width, height)
+      drawControlPoints(strokes)
+      drawCubicBezier(strokes)
     }
 
-    function draw(prevCoor, currCoor) {
+    function drawStrokePath(prevCoor, currCoor) {
       ctx.beginPath()
       ctx.moveTo(prevCoor.x, prevCoor.y)
       ctx.lineTo(currCoor.x, currCoor.y)
       ctx.stroke()
     }
 
-    function drawForTransform() {
-      ctx.beginPath()
-      line(lineData.map(p => [p.x, p.y]))
-      ctx.stroke()
-    }
-
     function drawControlPoints(beziers) {
-      ctx.save()
-      ctx.lineWidth = 1
-      ctx.strokeStyle = "black"
-      beziers.forEach(bezier =>
-        drawControlPoint(bezier.s0.x, bezier.s0.y))
-      ctx.restore()
+      if (beziers) {
+        ctx.save()
+        ctx.lineWidth = 1
+        ctx.strokeStyle = "black"
+        beziers.forEach(bezier =>
+          drawControlPoint(bezier.s0.x, bezier.s0.y))
+        ctx.restore()
+      }
     }
 
     function drawControlPoint(x, y) {
@@ -101,31 +108,64 @@
     }
 
     function drawCubicBezier(beziers) {
-      ctx.save()
-      ctx.lineWidth = 2
-      ctx.strokeStyle = "red"
-      beziers.forEach(bezier => {
-        ctx.beginPath()
-        ctx.moveTo(bezier.s0.x, bezier.s0.y)
-        ctx.bezierCurveTo(
-          bezier.b0.x, bezier.b0.y,
-          bezier.b1.x, bezier.b1.y,
-          bezier.s1.x, bezier.s1.y
-        )
-        ctx.stroke()
-      })
-      ctx.restore()
-    }
-
-    function end() {
-      if (lineData.length) {
-        prev = invertNormalize(lineData[lineData.length - 1], transform)
-        var controlPoints = calculateControlPoints(lineData)
-        drawControlPoints(controlPoints)
-        drawCubicBezier(controlPoints)
+      if (beziers) {
+        ctx.save()
+        ctx.lineWidth = 2
+        ctx.strokeStyle = "red"
+        beziers.forEach(bezier => {
+          ctx.beginPath()
+          ctx.moveTo(bezier.s0.x, bezier.s0.y)
+          ctx.bezierCurveTo(
+            bezier.b0.x, bezier.b0.y,
+            bezier.b1.x, bezier.b1.y,
+            bezier.s1.x, bezier.s1.y
+          )
+          ctx.stroke()
+        })
+        ctx.restore()
       }
     }
 
+
+    // DOM Event handling
+    function zoom() {
+      transform = Promise.all([
+        getStrokes(),
+        Promise.resolve(d3.event)
+      ]).then(res => {
+        var strokes = res[0]
+        var e = res[1]
+
+        ctx.save()
+        ctx.clearRect(0, 0, width, height)
+        ctx.translate(e.transform.x, e.transform.y)
+        ctx.scale(e.transform.k, e.transform.k)
+        draw(strokes)
+        ctx.restore()
+
+        return e.transform
+      })
+
+    }
+
+    function record() {
+      Promise.all([
+        Promise.resolve({ x: d3.event.offsetX, y: d3.event.offsetY }),
+        currStroke,
+        transform
+      ]).then(res => {
+        var p = res[0]
+        var stroke = res[1]
+        var t = res[2]
+        if (stroke && stroke.length) {
+          drawStrokePath(invertNormalize(stroke[stroke.length - 1], t), p)
+        }
+        return stroke.push(normalize(p, t))
+      })
+    }
+
+
+    // Event handler setup/teardown
     function setupAltControls() {
       if (d3.event.metaKey) {
         setupZoom()
@@ -142,7 +182,10 @@
 
     function setupDraw() {
       canvas.on("mousedown", () => canvas.on("mousemove", record))
-      canvas.on("mouseup", () => canvas.on("mousemove", null))
+      canvas.on("mouseup", () => {
+        canvas.on("mousemove", null)
+        currStroke = saveStroke(currStroke)
+      })
     }
 
     function teardownDraw() {
@@ -152,16 +195,11 @@
     }
 
     function setupZoom() {
-      canvas.call(d3.zoom()
-        .on("zoom", zoom)
-        .on("end", end)
-      )
+      canvas.call(d3.zoom().on("zoom", zoom))
     }
 
     function teardownZoom() {
-      canvas
-        .on(".zoom", null)
-        .on(".end", null)
+      canvas.on(".zoom", null)
     }
 
   </script>
