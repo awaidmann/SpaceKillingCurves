@@ -59,28 +59,25 @@
             .then(setNextStrokes),
           transform
         ]).then(res => {
-          var t = res[1]
-          var strokes = res[0].map(b => {
-            return {
-              s0: invertNormalize(b.s0, t),
-              s1: invertNormalize(b.s1, t),
-              b0: invertNormalize(b.b0, t),
-              b1: invertNormalize(b.b1, t)
-            }
-          })
-
-          ctx.clearRect(0, 0, width, height)
-          draw(strokes)
-          return [normalize((strokes[strokes.length - 1] || {}).s1 || {}, t)]
+          var strokes = res[0]
+          draw(strokes, res[1])
+          return [(strokes[strokes.length - 1] || {}).s1 || {}]
         })
     }
 
 
     // Canvas/D3 drawing
-    function draw(strokes) {
-      // ctx.clearRect(0, 0, width, height)
+    function draw(strokes, transform) {
+      ctx.save()
+      ctx.clearRect(0, 0, width, height)
+      if (transform) {
+        ctx.translate(transform.x, transform.y)
+        ctx.scale(transform.k, transform.k)
+      }
       drawControlPoints(strokes)
       drawCubicBezier(strokes)
+
+      ctx.restore()
     }
 
     function drawStrokePath(prevCoor, currCoor) {
@@ -133,17 +130,9 @@
         getStrokes(),
         Promise.resolve(d3.event)
       ]).then(res => {
-        var strokes = res[0]
-        var e = res[1]
-
-        ctx.save()
-        ctx.clearRect(0, 0, width, height)
-        ctx.translate(e.transform.x, e.transform.y)
-        ctx.scale(e.transform.k, e.transform.k)
-        draw(strokes)
-        ctx.restore()
-
-        return e.transform
+        var transform = (res[1] || {}).transform
+        draw(res[0], transform)
+        return transform
       })
 
     }
