@@ -26,7 +26,15 @@ function cubicBezierControlPointsFromDataPoints(dataPoints) {
   // Row Echelon pass (down): 1 mult, then 1 mult + 1 add
   // Reduced Row Echelon pass (up): 1 mult + 1 add
 
-  if (dataPoints && dataPoints.length > 3) {
+  if (dataPoints && dataPoints.length) {
+    if (dataPoints.length == 1) {
+      return [{
+        s0: dataPoints[0],
+        s1: dataPoints[0],
+        b0: dataPoints[0],
+        b1: dataPoints[0]
+      }]
+    }
     var controlPoints = []
 
     var prevREF = [0, 0, 0]
@@ -113,6 +121,6 @@ function cubicBezierControlPointsFromDataPoints(dataPoints) {
     beziers.pop()
     return beziers
   } else {
-    return dataPoints
+    return []
   }
 }
