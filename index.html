@@ -46,6 +46,13 @@
         })
     }
 
+    function calculateControlPoints(dataPoints) {
+      return dataPoints
+        ? cubicBezierControlPointsFromDataPoints(
+          dataPoints.filter((_, i) => !(i%POINT_FILTER)
+            || i == (dataPoints.length - 1)))
+        : []
+    }
 
     // Canvas/D3 drawing
     function draw(strokes, transform) {

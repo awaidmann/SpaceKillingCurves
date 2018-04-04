@@ -1,14 +1,5 @@
 'use strict'
 
-function calculateControlPoints(dataPoints) {
-  return dataPoints
-    ? cubicBezierControlPointsFromDataPoints(
-      dataPoints.filter((_, i) => !(i%POINT_FILTER)
-        || i == (dataPoints.length - 1)))
-    : []
-}
-
-
 function cubicBezierControlPointsFromDataPoints(dataPoints) {
   // http://www.math.ucla.edu/~baker/149.1.02w/handouts/dd_splines.pdf
 
