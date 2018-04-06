@@ -111,30 +111,42 @@ Morton._combineQuadTrees = function(xQT, yQT) {
   return combineQuadTreesRec(xQT, yQT, [""])
 }
 
-Morton.prototype.quadrantForPoint = function (point) {
-  function quadrantForPointRec(p, minX, maxX, minY, maxY, quadKey) {
+Morton.prototype.quadrantForPoint = function (point, threshold) {
+  var th = threshold !== undefined ? threshold : 1
+  var adjPoint = point
+    ? { x: point.x - (this.origin.x || 0), y: point.y - (this.origin.y || 0) }
+    : undefined
+
+  function quadrantForPointRec(minX, maxX, minY, maxY, quadKey) {
     var midX = (minX + maxX) / 2
     var midY = (minY + maxY) / 2
 
-    if ((midX - minX) > 1 && (midY - minY) > 1) {
-      var xArgs = p.x > minX && p.x < midX ? [minX, midX, 0] : [midX, maxX, 1]
-      var yArgs = p.y > minY && p.y < midY ? [minY, midY, 0] : [midY, maxY, 1]
+    if ((midX - minX) >= th && (midY - minY) >= th) {
+      var xArgs = adjPoint.x >= minX && adjPoint.x < midX ? [minX, midX, 0] : [midX, maxX, 1]
+      var yArgs = adjPoint.y >= minY && adjPoint.y < midY ? [minY, midY, 0] : [midY, maxY, 1]
 
       return quadrantForPointRec(
-        p, xArgs[0], xArgs[1], yArgs[0], yArgs[1],
+        xArgs[0], xArgs[1], yArgs[0], yArgs[1],
         (quadKey || []).concat([yArgs[2], xArgs[2]])
       )
     }
     return quadKey || []
   }
 
-  return point ? quadrantForPointRec(
-    { x: point.x - (this.origin.x || 0), y: point.y - (this.origin.y || 0) },
-    this.minXBoundary,
-    this.maxXBoundary,
-    this.minYBoundary,
-    this.maxYBoundary
-  ) : []
+  if (adjPoint
+    && adjPoint.x >= this.minXBoundary && adjPoint.x <= this.maxXBoundary
+    && adjPoint.y >= this.minYBoundary && adjPoint.y <= this.maxYBoundary
+  ) {
+    return quadrantForPointRec(
+      this.minXBoundary,
+      this.maxXBoundary,
+      this.minYBoundary,
+      this.maxYBoundary
+    )
+  } else {
+    return
+  }
+
 }
 
 Morton.prototype.quadrantRangesForSearch = function (viewRect, maxRanges) {
