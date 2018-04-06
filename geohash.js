@@ -89,26 +89,26 @@ Morton._combineQuadTrees = function(xQT, yQT) {
         : ySubQT
 
       if (xSubQT === Morton._QUAD_SENTINEL && ySubQT.l === Morton._QUAD_SENTINEL) {
-        subPaths = subPaths.concat(path.map(p => p.concat([0])))
+        subPaths = subPaths.concat(path.map(p => p + "0"))
       } else {
         subPaths = subPaths.concat(
-          ySubQTExp.l && xSubQTExp.l ? combineQuadTreesRec(xSubQTExp.l, ySubQTExp.l, path.map(p => p.concat([0, 0]))) : [],
-          ySubQTExp.l && xSubQTExp.r ? combineQuadTreesRec(xSubQTExp.r, ySubQTExp.l, path.map(p => p.concat([0, 1]))) : []
+          ySubQTExp.l && xSubQTExp.l ? combineQuadTreesRec(xSubQTExp.l, ySubQTExp.l, path.map(p => p + "00")) : [],
+          ySubQTExp.l && xSubQTExp.r ? combineQuadTreesRec(xSubQTExp.r, ySubQTExp.l, path.map(p => p + "01")) : []
         )
       }
 
       if (xSubQT === Morton._QUAD_SENTINEL && ySubQT.r === Morton._QUAD_SENTINEL) {
-        subPaths = subPaths.concat(path.map(p => p.concat([1])))
+        subPaths = subPaths.concat(path.map(p => p + "1"))
       } else {
         subPaths = subPaths.concat(
-          ySubQTExp.r && xSubQTExp.l ? combineQuadTreesRec(xSubQTExp.l, ySubQTExp.r, path.map(p => p.concat([1, 0]))) : [],
-          ySubQTExp.r && xSubQTExp.r ? combineQuadTreesRec(xSubQTExp.r, ySubQTExp.r, path.map(p => p.concat([1, 1]))) : []
+          ySubQTExp.r && xSubQTExp.l ? combineQuadTreesRec(xSubQTExp.l, ySubQTExp.r, path.map(p => p + "10")) : [],
+          ySubQTExp.r && xSubQTExp.r ? combineQuadTreesRec(xSubQTExp.r, ySubQTExp.r, path.map(p => p + "11")) : []
         )
       }
       return subPaths
     }
   }
-  return combineQuadTreesRec(xQT, yQT, [[]])
+  return combineQuadTreesRec(xQT, yQT, [""])
 }
 
 Morton.prototype.quadrantForPoint = function (point) {
