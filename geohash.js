@@ -1,6 +1,12 @@
 'use strict'
 
-var GeoHash = function() {}
+var GeoHash = function(minX, maxX, minY, maxY) {
+  this.minXBoundary = minX || GeoHash.MIN_BOUNDARY
+  this.maxXBoundary = maxX || GeoHash.MAX_BOUNDARY
+
+  this.minYBoundary = minY || GeoHash.MIN_BOUNDARY
+  this.maxYBoundary = maxY || GeoHash.MAX_BOUNDARY
+}
 
 GeoHash.MAX_BOUNDARY = Math.pow(2, 52) // Number.MAX_SAFE_INTEGER = 2^53 - 1
 GeoHash.MIN_BOUNDARY = -1 * GeoHash.MAX_BOUNDARY
@@ -28,13 +34,9 @@ GeoHash.boundingBox = function (bezier) {
 }
 
 
-var Curve = function(origin, minX, maxX, minY, maxY) {
+var Curve = function(geoHash, origin) {
   this.origin = origin || { x: 0, y: 0 }
-  this.minXBoundary = minX
-  this.maxXBoundary = maxX
-
-  this.minYBoundary = minY
-  this.maxYBoundary = maxY
+  this.geoHash = geoHash
 }
 Curve.prototype.quadrantForPoint = function(point) {}
 Curve.prototype.quadrantForBezier = function(bezier) {
@@ -43,8 +45,8 @@ Curve.prototype.quadrantForBezier = function(bezier) {
 Curve.prototype.quadrantRangesForSearch = function(viewRect, maxRanges) {}
 
 
-var Morton = function(origin) {
-  Curve.call(this, origin, GeoHash.MIN_BOUNDARY, GeoHash.MAX_BOUNDARY, GeoHash.MIN_BOUNDARY, GeoHash.MAX_BOUNDARY)
+var Morton = function(geoHash, origin) {
+  Curve.call(this, geoHash, origin)
 }
 
 Morton.prototype = Object.create(Curve.prototype)
@@ -134,19 +136,20 @@ Morton.prototype.quadrantForPoint = function (point, threshold) {
   }
 
   if (adjPoint
-    && adjPoint.x >= this.minXBoundary && adjPoint.x <= this.maxXBoundary
-    && adjPoint.y >= this.minYBoundary && adjPoint.y <= this.maxYBoundary
+    && adjPoint.x >= this.geoHash.minXBoundary
+    && adjPoint.x <= this.geoHash.maxXBoundary
+    && adjPoint.y >= this.geoHash.minYBoundary
+    && adjPoint.y <= this.geoHash.maxYBoundary
   ) {
     return quadrantForPointRec(
-      this.minXBoundary,
-      this.maxXBoundary,
-      this.minYBoundary,
-      this.maxYBoundary
+      this.geoHash.minXBoundary,
+      this.geoHash.maxXBoundary,
+      this.geoHash.minYBoundary,
+      this.geoHash.maxYBoundary
     )
   } else {
     return
   }
-
 }
 
 Morton.prototype.quadrantRangesForSearch = function (viewRect, maxRanges) {
