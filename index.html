@@ -40,7 +40,9 @@
         .then(dps => {
           var cps = calculateControlPoints(dps)
           return calculateVelocityComponents(dps)
-            .map((velCmp, i) => Object.assign({}, cps[i], velCmp))
+            .map((velCmp, i) => Object.assign({
+                scale: _transform && _transform.k ? _transform.k : 1
+              }, cps[i], velCmp))
         })
         .then(setNextStrokes)
         .then(strokes => {
