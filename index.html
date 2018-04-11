@@ -28,7 +28,8 @@
     var POINT_FILTER = 5
     var _strokes = []
     var _transform
-    var canvas,
+    var zoomBehavior,
+      canvas,
       ctx,
       width = 0,
       height = 0
@@ -118,7 +119,7 @@
 
     // DOM Event handling
     function zoom() {
-      Promise.all([
+      return Promise.all([
         getStrokes(),
         Promise.resolve(d3.event.transform)
       ]).then(res => {
@@ -127,6 +128,21 @@
       })
     }
 
+    function snapToEnd() {
+      return Promise.all([
+        getStrokes(),
+        Promise.resolve(d3.event),
+        Promise.resolve(_transform)
+      ]).then(res => {
+        if (res[0].length) {
+          var lastPoint = invertNormalize(res[0][res[0].length - 1].end, res[2])
+          var scale = res[2] && res[2].k ? res[2].k : 1
+          return translateCanvas(
+            (res[1].offsetX - lastPoint.x) / scale,
+            (res[1].offsetY - lastPoint.y) / scale
+          )
+        }
+      })
     }
 
     function record() {
@@ -156,6 +172,8 @@
     }
 
     function init() {
+      zoomBehavior = d3.zoom()
+
       canvas = d3.select("#line-canvas")
       resize()
 
@@ -183,7 +201,9 @@
     }
 
     function setupDraw() {
-      canvas.on("mousedown", () => canvas.on("mousemove", record))
+      canvas.on("mousedown", () => {
+        snapToEnd().then(() => canvas.on("mousemove", record))
+      })
       canvas.on("mouseup", () => {
         canvas.on("mousemove", null)
         saveStroke()
@@ -197,11 +217,25 @@
     }
 
     function setupZoom() {
-      canvas.call(d3.zoom().on("zoom", zoom))
+      canvas.call(zoomBehavior.on("zoom", zoom))
     }
 
     function teardownZoom() {
       canvas.on(".zoom", null)
+    }
+
+    function translateCanvas(x, y) {
+      return new Promise((resolve, reject) => {
+        canvas.call(zoomBehavior.on("zoom", () => {
+          zoom().then(
+            () => {
+              teardownZoom()
+              resolve()
+            }
+          )
+        }))
+        zoomBehavior.translateBy(canvas, x, y)
+      })
     }
 
   </script>
