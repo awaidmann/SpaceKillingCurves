@@ -1,6 +1,15 @@
 'use strict'
 
-function cubicBezierControlPointsFromDataPoints(dataPoints) {
+var Bezier = function(startCoor, endCoor, controlPointA, controlPointB) {
+  this.start = startCoor || {}
+  this.end = endCoor || {}
+  this.cpA = controlPointA || {}
+  this.cpB = controlPointB || {}
+}
+
+Bezier.empty = function() { return new Bezier() }
+
+Bezier.cubicBezierControlPointsFromDataPoints = function(dataPoints) {
   // http://www.math.ucla.edu/~baker/149.1.02w/handouts/dd_splines.pdf
 
   // efficient storage: for all members of the [M|C] augmented matrix, the
@@ -19,12 +28,7 @@ function cubicBezierControlPointsFromDataPoints(dataPoints) {
 
   if (dataPoints && dataPoints.length) {
     if (dataPoints.length == 1) {
-      return [{
-        s0: dataPoints[0],
-        s1: dataPoints[0],
-        b0: dataPoints[0],
-        b1: dataPoints[0]
-      }]
+      return [new Bezier(dataPoints[0], dataPoints[0], dataPoints[0], dataPoints[0])]
     }
     var controlPoints = []
 
@@ -99,19 +103,38 @@ function cubicBezierControlPointsFromDataPoints(dataPoints) {
           var bX = b.x - bNext.x
           var bY = b.y - bNext.y
 
-          return {
-            s0: dataPoints[i],
-            s1: dataPoints[i+1],
-            b0: { x: b.x - bX/3, y: b.y - bY/3 },
-            b1: { x: bNext.x + bX/3, y: bNext.y + bY/3 }
-          }
+          return new Bezier(
+            dataPoints[i],
+            dataPoints[i+1],
+            { x: b.x - bX/3, y: b.y - bY/3 },
+            { x: bNext.x + bX/3, y: bNext.y + bY/3 }
+          )
         } else {
-          return {}
+          return Bezier.empty()
         }
       })
     beziers.pop()
     return beziers
   } else {
     return []
+  }
+}
+
+Bezier.prototype.boundingBox = function() {
+  function safeComp(vals, fn, def) {
+    return fn.apply(null, vals.map(x => x || def))
+  }
+
+  var minX = safeComp([this.start.x, this.end.x, this.cpA.x, this.cpB.x], Math.min, Number.MAX_SAFE_INTEGER)
+  var minY = safeComp([this.start.y, this.end.y, this.cpA.y, this.cpB.y], Math.min, Number.MAX_SAFE_INTEGER)
+  var maxX = safeComp([this.start.x, this.end.x, this.cpA.x, this.cpB.x], Math.max, Number.MIN_SAFE_INTEGER)
+  var maxY = safeComp([this.start.y, this.end.y, this.cpA.y, this.cpB.y], Math.max, Number.MIN_SAFE_INTEGER)
+
+  return {
+    left: minX,
+    right: maxX,
+    top: minY,
+    bottom: maxY,
+    center: { x: (minX + maxX) / 2, y: (minY + maxY) / 2 }
   }
 }

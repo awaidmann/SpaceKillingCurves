@@ -42,13 +42,13 @@
         ]).then(res => {
           var strokes = res[0]
           draw(strokes, res[1])
-          return [(strokes[strokes.length - 1] || {}).s1 || {}]
+          return [(strokes[strokes.length - 1] || {}).end || {}]
         })
     }
 
     function calculateControlPoints(dataPoints) {
       return dataPoints
-        ? cubicBezierControlPointsFromDataPoints(
+        ? Bezier.cubicBezierControlPointsFromDataPoints(
           dataPoints.filter((_, i) => !(i%POINT_FILTER)
             || i == (dataPoints.length - 1)))
         : []
@@ -81,7 +81,7 @@
         ctx.save()
         ctx.lineWidth = 1
         ctx.strokeStyle = "black"
-        beziers.forEach(bezier => drawControlPoint(bezier.s0, 2))
+        beziers.forEach(bezier => drawControlPoint(bezier.start, 2))
         ctx.restore()
       }
     }
@@ -101,15 +101,15 @@
         ctx.strokeStyle = "red"
         ctx.fillStyle = "red"
 
-        drawControlPoint((beziers[0] || {}).s0, 4)
+        drawControlPoint((beziers[0] || {}).start, 4)
 
         beziers.forEach(bezier => {
           ctx.beginPath()
-          ctx.moveTo(bezier.s0.x, bezier.s0.y)
+          ctx.moveTo(bezier.start.x, bezier.start.y)
           ctx.bezierCurveTo(
-            bezier.b0.x, bezier.b0.y,
-            bezier.b1.x, bezier.b1.y,
-            bezier.s1.x, bezier.s1.y
+            bezier.cpA.x, bezier.cpA.y,
+            bezier.cpB.x, bezier.cpB.y,
+            bezier.end.x, bezier.end.y
           )
           ctx.stroke()
         })

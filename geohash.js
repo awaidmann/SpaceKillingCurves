@@ -11,28 +11,6 @@ var GeoHash = function(minX, maxX, minY, maxY) {
 GeoHash.MAX_BOUNDARY = Math.pow(2, 52) // Number.MAX_SAFE_INTEGER = 2^53 - 1
 GeoHash.MIN_BOUNDARY = -1 * GeoHash.MAX_BOUNDARY
 
-GeoHash.boundingBox = function (bezier) {
-  function safeComp(vals, fn, def) {
-    return fn.apply(null, vals.map(x => x || def))
-  }
-
-  if (bezier) {
-    var minX = safeComp([bezier.s0.x, bezier.s1.x, bezier.b0.x, bezier.b1.x], Math.min, Number.MAX_SAFE_INTEGER)
-    var minY = safeComp([bezier.s0.y, bezier.s1.y, bezier.b0.y, bezier.b1.y], Math.min, Number.MAX_SAFE_INTEGER)
-    var maxX = safeComp([bezier.s0.x, bezier.s1.x, bezier.b0.x, bezier.b1.x], Math.max, Number.MIN_SAFE_INTEGER)
-    var maxY = safeComp([bezier.s0.y, bezier.s1.y, bezier.b0.y, bezier.b1.y], Math.max, Number.MIN_SAFE_INTEGER)
-
-    return {
-      left: minX,
-      right: maxX,
-      top: minY,
-      bottom: maxY,
-      center: { x: (minX + maxX) / 2, y: (minY + maxY) / 2 }
-    }
-  }
-  return
-}
-
 
 var Curve = function(geoHash, origin) {
   this.origin = origin || { x: 0, y: 0 }
@@ -40,7 +18,7 @@ var Curve = function(geoHash, origin) {
 }
 Curve.prototype.quadrantForPoint = function(point) {}
 Curve.prototype.quadrantForBezier = function(bezier) {
-  return this.quadrantForPoint((GeoHash.boundingBox(bezier) || {}).center)
+  return this.quadrantForPoint(bezier.boundingBox().center)
 }
 Curve.prototype.quadrantRangesForSearch = function(viewRect, maxRanges) {}
 
