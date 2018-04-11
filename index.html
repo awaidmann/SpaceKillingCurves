@@ -41,7 +41,7 @@
         .then(setNextStrokes)
         .then(strokes => {
           draw(strokes, _transform)
-          _strokes = [(strokes[strokes.length - 1] || {}).end || {}]
+          _strokes = []
         })
     }
 
