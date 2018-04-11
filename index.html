@@ -37,7 +37,11 @@
     function saveStroke() {
       return Promise
         .resolve(_strokes)
-        .then(calculateControlPoints)
+        .then(dps => {
+          var cps = calculateControlPoints(dps)
+          return calculateVelocityComponents(dps)
+            .map((velCmp, i) => Object.assign({}, cps[i], velCmp))
+        })
         .then(setNextStrokes)
         .then(strokes => {
           draw(strokes, _transform)
@@ -48,8 +52,32 @@
     function calculateControlPoints(dataPoints) {
       return dataPoints
         ? Bezier.cubicBezierControlPointsFromDataPoints(
-          dataPoints.filter((_, i) => !(i%POINT_FILTER)
-            || i == (dataPoints.length - 1)))
+            dataPoints.filter((_, i, data) => !(i%POINT_FILTER) || i == (data.length - 1))
+          )
+        : []
+    }
+
+    function calculateVelocityComponents(dataPoints) {
+      return dataPoints
+        ? dataPoints.reduce((distGroup, dp, i) => {
+            var totalDist = distGroup.dist
+              + distGroup.last && dp
+                ? Math.sqrt(Math.pow(distGroup.last.x - dp.x, 2) + Math.pow(distGroup.last.y - dp.y, 2))
+                : 0
+            var isFilteredIn = !(i%POINT_FILTER) || i == (dataPoints.length - 1)
+            var toReturn = {
+              last: dp,
+              startTime: isFilteredIn ? dp.t : distGroup.startTime,
+              dist: isFilteredIn ? 0 : totalDist,
+              dists: distGroup.dists.concat(isFilteredIn
+                ? [{
+                    dD: totalDist,
+                    dT: i ? dp.t - distGroup.startTime : 0
+                  }]
+                : [])
+            }
+            return toReturn
+          }, { last: undefined, startTime: 0, dist: 0, dists: [] }).dists.slice(1)
         : []
     }
 
@@ -184,6 +212,7 @@
         .on("keydown", setupAltControls)
         .on("keyup", teardownAltControls)
     }
+
 
     // Event handler setup/teardown
     function setupAltControls() {
