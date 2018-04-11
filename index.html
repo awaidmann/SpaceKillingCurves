@@ -26,23 +26,21 @@
   <script src="https://d3js.org/d3-zoom.v1.min.js"></script>
   <script>
     var POINT_FILTER = 5
-    var currStroke = Promise.resolve([])
-    var transform = Promise.resolve()
+    var _strokes = []
+    var _transform
     var canvas,
       ctx,
       width = 0,
       height = 0
 
-    function saveStroke(strokePromise) {
-      return Promise.all([
-          strokePromise
-            .then(calculateControlPoints)
-            .then(setNextStrokes),
-          transform
-        ]).then(res => {
-          var strokes = res[0]
-          draw(strokes, res[1])
-          return [(strokes[strokes.length - 1] || {}).end || {}]
+    function saveStroke() {
+      return Promise
+        .resolve(_strokes)
+        .then(calculateControlPoints)
+        .then(setNextStrokes)
+        .then(strokes => {
+          draw(strokes, _transform)
+          _strokes = [(strokes[strokes.length - 1] || {}).end || {}]
         })
     }
 
@@ -120,31 +118,26 @@
 
     // DOM Event handling
     function zoom() {
-      transform = Promise.all([
+      Promise.all([
         getStrokes(),
-        Promise.resolve(d3.event)
+        Promise.resolve(d3.event.transform)
       ]).then(res => {
-        var transform = (res[1] || {}).transform
-        draw(res[0], transform)
-        return transform
+        _transform = res[1]
+        draw(res[0], _transform)
       })
+    }
 
     }
 
     function record() {
-      Promise.all([
-        Promise.resolve({ x: d3.event.offsetX, y: d3.event.offsetY }),
-        currStroke,
-        transform
-      ]).then(res => {
-        var p = res[0]
-        var stroke = res[1]
-        var t = res[2]
-        if (stroke && stroke.length) {
-          drawStrokePath(invertNormalize(stroke[stroke.length - 1], t), p)
-        }
-        return stroke.push(normalize(p, t))
-      })
+      var point = { x: d3.event.offsetX, y: d3.event.offsetY, t: Date.now() }
+      if (_strokes && _strokes.length) {
+        drawStrokePath(
+          invertNormalize(_strokes[_strokes.length - 1], _transform),
+          point
+        )
+      }
+      _strokes.push(normalize(point, _transform))
     }
 
     function resize() {
@@ -157,7 +150,7 @@
       }
 
       if (ctx) {
-        Promise.all([getStrokes(), transform])
+        Promise.all([getStrokes(), _transform])
           .then(res => draw.apply(null, res))
       }
     }
@@ -193,7 +186,7 @@
       canvas.on("mousedown", () => canvas.on("mousemove", record))
       canvas.on("mouseup", () => {
         canvas.on("mousemove", null)
-        currStroke = saveStroke(currStroke)
+        saveStroke()
       })
     }
 
