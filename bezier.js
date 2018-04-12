@@ -120,15 +120,15 @@ Bezier.cubicBezierControlPointsFromDataPoints = function(dataPoints) {
   }
 }
 
-Bezier.prototype.boundingBox = function() {
+Bezier.boundingBox = function(bezier) {
   function safeComp(vals, fn, def) {
     return fn.apply(null, vals.map(x => x || def))
   }
 
-  var minX = safeComp([this.start.x, this.end.x, this.cpA.x, this.cpB.x], Math.min, Number.MAX_SAFE_INTEGER)
-  var minY = safeComp([this.start.y, this.end.y, this.cpA.y, this.cpB.y], Math.min, Number.MAX_SAFE_INTEGER)
-  var maxX = safeComp([this.start.x, this.end.x, this.cpA.x, this.cpB.x], Math.max, Number.MIN_SAFE_INTEGER)
-  var maxY = safeComp([this.start.y, this.end.y, this.cpA.y, this.cpB.y], Math.max, Number.MIN_SAFE_INTEGER)
+  var minX = safeComp([bezier.start.x, bezier.end.x, bezier.cpA.x, bezier.cpB.x], Math.min, Number.MAX_SAFE_INTEGER)
+  var minY = safeComp([bezier.start.y, bezier.end.y, bezier.cpA.y, bezier.cpB.y], Math.min, Number.MAX_SAFE_INTEGER)
+  var maxX = safeComp([bezier.start.x, bezier.end.x, bezier.cpA.x, bezier.cpB.x], Math.max, Number.MIN_SAFE_INTEGER)
+  var maxY = safeComp([bezier.start.y, bezier.end.y, bezier.cpA.y, bezier.cpB.y], Math.max, Number.MIN_SAFE_INTEGER)
 
   return {
     left: minX,

@@ -11,15 +11,21 @@ var GeoHash = function(minX, maxX, minY, maxY) {
 GeoHash.MAX_BOUNDARY = Math.pow(2, 52) // Number.MAX_SAFE_INTEGER = 2^53 - 1
 GeoHash.MIN_BOUNDARY = -1 * GeoHash.MAX_BOUNDARY
 
+GeoHash.default = function() { return new GeoHash() }
 
 var Curve = function(geoHash, origin) {
   this.origin = origin || { x: 0, y: 0 }
   this.geoHash = geoHash
 }
 Curve.prototype.quadrantForPoint = function(point) {}
-Curve.prototype.quadrantForBezier = function(bezier) {
-  return this.quadrantForPoint(bezier.boundingBox().center)
+Curve.prototype.quadrantForBezier = function(bezier, threshold) {
+  return this.quadrantForPointAsString(Bezier.boundingBox(bezier).center, threshold)
 }
+Curve.prototype.quadrantForPointAsString = function(point, threshold) {
+  var quad = this.quadrantForPoint(point, threshold)
+  return quad ? quad.reduce((s, q) => s+q, "") : ""
+}
+
 Curve.prototype.quadrantRangesForSearch = function(viewRect, maxRanges) {}
 
 
