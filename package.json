@@ -2,8 +2,9 @@
   "name": "spacekillingcurves",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "private": true,
   "scripts": {
+    "build": "webpack",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": "",
@@ -13,7 +14,10 @@
     "redux": "^4.0.0"
   },
   "devDependencies": {
-    "babel-loader": "^7.1.4",
-    "webpack": "^4.6.0"
+    "@babel/core": "^7.0.0-beta.44",
+    "@babel/preset-env": "^7.0.0-beta.44",
+    "babel-loader": "^8.0.0-beta.2",
+    "webpack": "^4.6.0",
+    "webpack-cli": "^2.0.14"
   }
 }
