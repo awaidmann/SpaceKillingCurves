@@ -72,14 +72,19 @@ export function resize(width, height) {
   return { type: RESIZE, width, height }
 }
 
-export function fetchStrokes(strokePrefixes) {
-  return { type: FETCH_STROKES, strokePrefixes }
+export function fetchStrokes(searchPrefixes) {
+  return (dispatch, getState) => {
+    dispatch({ type: FETCH_STROKES, searchPrefixes })
+    return Promise.resolve({})
+      .then(resp => dispatch(fetchStrokesSuccess(prefix: "", resp)))
+      .catch(error => dispatch(fetchStrokesError(prefix: "", error)))
+  }
 }
 
-export function fetchStrokesError(error) {
-  return errorAction(FETCH_STROKES_ERROR, error)
+export function fetchStrokesError(prefix, error) {
+  return { type: FETCH_STROKES_ERROR, prefix, error }
 }
 
-export function fetchStrokesSuccess(strokes) {
-  return successAction(FETCH_STROKES_SUCCESS, strokes)
+export function fetchStrokesSuccess(prefix, strokes) {
+  return { type: FETCH_STROKES_SUCCESS, prefix, strokes }
 }
