@@ -52,14 +52,24 @@ export function fetchProjectSuccess(project) {
 
 // Data viewport/retrieval actions/functions
 
-export const TRANSFORM_VIEW = 'TRANSFORM_VIEW'
+export const PAN = 'PAN'
+export const ZOOM = 'ZOOM'
+export const RESIZE = 'RESIZE'
 
 export const FETCH_STROKES = 'FETCH_STROKES'
 export const FETCH_STROKES_ERROR = 'FETCH_STROKES_ERROR'
 export const FETCH_STROKES_SUCCESS = 'FETCH_STROKES_SUCCESS'
 
-export function transform(transform) {
-  return { type: TRANSFORM_VIEW, transform }
+export function pan(x, y) {
+  return { type: PAN, x, y }
+}
+
+export function zoom(scale) {
+  return { type: ZOOM, scale }
+}
+
+export function resize(width, height) {
+  return { type: RESIZE, width, height }
 }
 
 export function fetchStrokes(strokePrefixes) {
