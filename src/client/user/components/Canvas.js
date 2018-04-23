@@ -11,19 +11,24 @@ export class Canvas extends React.Component {
 
     this.canvasRef = React.createRef()
     this.handleZoom = this.handleZoom.bind(this)
+    this._windowRectFromProps = this._windowRectFromProps.bind(this)
 
     this.state = {}
+  }
+
+  _windowRectFromProps() {
+    return { x: 0, y: 0, width: this.props.width, height: this.props.height }
   }
 
   componentDidMount() {
     this.canvasSelection = select(this.canvasRef.current)
       .call(this.zoomBehavior.on('zoom', this.handleZoom))
     this.drawingCtx = new Draw(this.canvasRef.current.getContext('2d'))
-    this.drawingCtx.cubicBeziers(this.props.beziers)(this.props.windowRect)()
+    this.drawingCtx.cubicBeziers(this.props.beziers)(this._windowRectFromProps())()
   }
 
   componentDidUpdate() {
-    this.drawingCtx.cubicBeziers(this.props.beziers)(this.props.windowRect)(this.state.transform)
+    this.drawingCtx.cubicBeziers(this.props.beziers)(this._windowRectFromProps())(this.state.transform)
   }
 
   componentWillUnmount() {

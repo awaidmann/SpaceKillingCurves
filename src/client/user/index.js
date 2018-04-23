@@ -3,12 +3,7 @@ import { render } from 'react-dom'
 
 import { App } from './components/App'
 
-const style = {
-  width: window.screen.availWidth,
-  height: window.screen.availHeight,
-}
-
 render(
-  <App {...style} />,
+  <App />,
   document.getElementById('react')
 )
