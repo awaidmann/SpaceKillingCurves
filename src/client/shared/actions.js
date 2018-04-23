@@ -72,12 +72,14 @@ export function resize(width, height) {
   return { type: RESIZE, width, height }
 }
 
+// TODO: handle pagination
 export function fetchStrokes(searchPrefixes) {
   return (dispatch, getState) => {
     dispatch({ type: FETCH_STROKES, searchPrefixes })
+    // TODO: connect to data source methods
     return Promise.resolve({})
-      .then(resp => dispatch(fetchStrokesSuccess(prefix: "", resp)))
-      .catch(error => dispatch(fetchStrokesError(prefix: "", error)))
+      .then(resp => dispatch(fetchStrokesSuccess("", resp)))
+      .catch(error => dispatch(fetchStrokesError("", error)))
   }
 }
 
