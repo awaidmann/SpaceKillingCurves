@@ -2,9 +2,9 @@ import React from 'react'
 import { zoom } from 'd3-zoom'
 import { select, event as d3event } from 'd3-selection'
 
-import { Draw } from '../../shared/Draw'
+import Draw from '../../shared/Draw'
 
-export class Canvas extends React.Component {
+class Canvas extends React.Component {
   constructor(props) {
     super(props)
     this.zoomBehavior = zoom()
@@ -52,3 +52,5 @@ export class Canvas extends React.Component {
     )
   }
 }
+
+export default Canvas

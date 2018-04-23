@@ -6,7 +6,7 @@ export const DEFAULT_STYLE = {
   originRadius: 4
 }
 
-export class Draw {
+class Draw {
   constructor(ctx, style) {
     this.ctx = ctx
     this.style = Object.assign({}, DEFAULT_STYLE, style)
@@ -63,3 +63,5 @@ export class Draw {
     return this
   }
 }
+
+export default Draw

@@ -1,8 +1,8 @@
 import React from 'react'
 
-import { Canvas } from './Canvas'
+import Canvas from './Canvas'
 
-export class App extends React.Component {
+class App extends React.Component {
   constructor(props) {
     super(props)
     this.updateWindow = this.updateWindow.bind(this)
@@ -39,3 +39,5 @@ export class App extends React.Component {
     )
   }
 }
+
+export default App
