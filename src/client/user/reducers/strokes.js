@@ -4,11 +4,17 @@ import {
   FETCH_STROKES_SUCCESS
 } from '../../shared/actions'
 
+const INITIAL_STATE = {
+  pendingPrefixes: [],
+  errors: {},
+  strokes: {},
+}
+
 function filterPrefix(pending, prefix) {
   return prefix ? pending.filter(p => !(p === prefix)) : pending
 }
 
-function strokes(state = {}, action) {
+function strokes(state = INITIAL_STATE, action) {
   switch(action.type) {
     case FETCH_STROKES:
       return Object.assign({}, state, {
@@ -29,7 +35,7 @@ function strokes(state = {}, action) {
         })
       })
     default:
-      state
+      return state
   }
 }
 
