@@ -15,7 +15,7 @@ class Canvas extends React.Component {
   }
 
   _windowRectFromProps() {
-    return { x: 0, y: 0, width: this.props.transform.width, height: this.props.transform.height }
+    return { x: 0, y: 0, width: this.props.dimensions.width, height: this.props.dimensions.height }
   }
 
   _handleZoom() {
@@ -42,8 +42,8 @@ class Canvas extends React.Component {
       <div>
         <canvas
           ref={this.canvasRef}
-          height={this.props.transform.height}
-          width={this.props.transform.width}
+          height={this.props.dimensions.height}
+          width={this.props.dimensions.width}
         />
       </div>
     )
