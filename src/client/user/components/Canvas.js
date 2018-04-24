@@ -10,34 +10,31 @@ class Canvas extends React.Component {
     this.zoomBehavior = zoom()
 
     this.canvasRef = React.createRef()
-    this.handleZoom = this.handleZoom.bind(this)
+    this._handleZoom = this._handleZoom.bind(this)
     this._windowRectFromProps = this._windowRectFromProps.bind(this)
-
-    this.state = {}
   }
 
   _windowRectFromProps() {
-    return { x: 0, y: 0, width: this.props.width, height: this.props.height }
+    return { x: 0, y: 0, width: this.props.transform.width, height: this.props.transform.height }
+  }
+
+  _handleZoom() {
+    this.props.onTransform(d3event.transform)
   }
 
   componentDidMount() {
     this.canvasSelection = select(this.canvasRef.current)
-      .call(this.zoomBehavior.on('zoom', this.handleZoom))
+      .call(this.zoomBehavior.on('zoom', this._handleZoom))
     this.drawingCtx = new Draw(this.canvasRef.current.getContext('2d'))
     this.drawingCtx.cubicBeziers(this.props.beziers)(this._windowRectFromProps())()
   }
 
   componentDidUpdate() {
-    this.drawingCtx.cubicBeziers(this.props.beziers)(this._windowRectFromProps())(this.state.transform)
+    this.drawingCtx.cubicBeziers(this.props.beziers)(this._windowRectFromProps())(this.props.transform)
   }
 
   componentWillUnmount() {
     this.canvasSelection.on('zoom', null)
-  }
-
-  handleZoom() {
-    console.log(d3event)
-    this.setState({ transform: d3event.transform })
   }
 
   render() {
@@ -45,8 +42,8 @@ class Canvas extends React.Component {
       <div>
         <canvas
           ref={this.canvasRef}
-          height={this.props.height}
-          width={this.props.width}
+          height={this.props.transform.height}
+          width={this.props.transform.width}
         />
       </div>
     )

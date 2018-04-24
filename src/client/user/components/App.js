@@ -1,27 +1,20 @@
 import React from 'react'
 
-import Canvas from './Canvas'
+import BezierLoaderCanvas from '../containers/BezierLoaderCanvas'
 
 class App extends React.Component {
   constructor(props) {
     super(props)
     this.updateWindow = this.updateWindow.bind(this)
-    this.state = this._getWindowDimensions()
-  }
-
-  _getWindowDimensions() {
-    return {
-      width: window.innerWidth,
-      height: window.innerHeight,
-    }
   }
 
   updateWindow() {
-    this.setState(this._getWindowDimensions())
+    this.props.onResize(window.innerWidth, window.innerHeight)
   }
 
   componentDidMount() {
     window.addEventListener('resize', this.updateWindow)
+    this.updateWindow()
   }
 
   componentWillUnmount() {
@@ -31,10 +24,7 @@ class App extends React.Component {
   render() {
     return (
       <div>
-        <Canvas
-          width={this.state.width}
-          height={this.state.height}
-          />
+        <BezierLoaderCanvas />
       </div>
     )
   }

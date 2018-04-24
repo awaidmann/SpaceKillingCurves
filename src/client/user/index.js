@@ -2,12 +2,12 @@ import React from 'react'
 import { render } from 'react-dom'
 import { Provider } from 'react-redux'
 
-import App from './components/App'
+import ResizeableApp from './containers/ResizeableApp'
 import store from './store'
 
 render(
   <Provider store={store}>
-    <App />
+    <ResizeableApp />
   </Provider>,
   document.getElementById('react')
 )

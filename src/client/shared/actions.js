@@ -52,20 +52,15 @@ export function fetchProjectSuccess(project) {
 
 // Data viewport/retrieval actions/functions
 
-export const PAN = 'PAN'
-export const ZOOM = 'ZOOM'
+export const TRANSFORM = 'TRANSFORM'
 export const RESIZE = 'RESIZE'
 
 export const FETCH_STROKES = 'FETCH_STROKES'
 export const FETCH_STROKES_ERROR = 'FETCH_STROKES_ERROR'
 export const FETCH_STROKES_SUCCESS = 'FETCH_STROKES_SUCCESS'
 
-export function pan(x, y) {
-  return { type: PAN, x, y }
-}
-
-export function zoom(scale) {
-  return { type: ZOOM, scale }
+export function transform(x, y, k) {
+  return { type: TRANSFORM, x, y }
 }
 
 export function resize(width, height) {
