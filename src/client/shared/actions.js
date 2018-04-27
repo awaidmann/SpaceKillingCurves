@@ -1,3 +1,5 @@
+import beziers from '../../../data/spk_bezier_data.json'
+
 // Generic data retrieval action creators
 
 function errorAction(type, error) {
@@ -59,22 +61,28 @@ export const FETCH_STROKES = 'FETCH_STROKES'
 export const FETCH_STROKES_ERROR = 'FETCH_STROKES_ERROR'
 export const FETCH_STROKES_SUCCESS = 'FETCH_STROKES_SUCCESS'
 
-export function transform(x, y, k) {
-  return { type: TRANSFORM, x, y }
+export function transform(newTransform, prevTransform) {
+  // TODO: check if new transform is sufficiently different from prevTransform to initiate fetch
+  return fetchStrokes(["1"], { type: TRANSFORM, transform: newTransform })
 }
 
-export function resize(width, height) {
-  return { type: RESIZE, width, height }
+export function resize(newDimensions, prevDimensions) {
+  // TODO: check if new dimensions are sufficiently different from prevDimensions to initiate fetch
+  return fetchStrokes(["1"], { type: RESIZE, dimensions: newDimensions })
 }
 
 // TODO: handle pagination
-export function fetchStrokes(searchPrefixes) {
+export function fetchStrokes(searchPrefixes, intialAction) {
   return (dispatch, getState) => {
+    if (intialAction) dispatch(intialAction)
     dispatch({ type: FETCH_STROKES, searchPrefixes })
     // TODO: connect to data source methods
-    return Promise.resolve({})
-      .then(resp => dispatch(fetchStrokesSuccess("", resp)))
-      .catch(error => dispatch(fetchStrokesError("", error)))
+    return Promise.all(
+      searchPrefixes.map(prefix => {
+        Promise.resolve(beziers)
+          .then(resp => dispatch(fetchStrokesSuccess(prefix, resp)))
+          .catch(error => dispatch(fetchStrokesError(prefix, error)))
+      }))
   }
 }
 

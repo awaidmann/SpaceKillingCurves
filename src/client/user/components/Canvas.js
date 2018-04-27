@@ -26,11 +26,11 @@ class Canvas extends React.Component {
     this.canvasSelection = select(this.canvasRef.current)
       .call(this.zoomBehavior.on('zoom', this._handleZoom))
     this.drawingCtx = new Draw(this.canvasRef.current.getContext('2d'))
-    this.drawingCtx.cubicBeziers(this.props.beziers)(this._windowRectFromProps())()
+    this.drawingCtx.cubicBeziers(this.props.strokes.strokes["1"])(this._windowRectFromProps())()
   }
 
   componentDidUpdate() {
-    this.drawingCtx.cubicBeziers(this.props.beziers)(this._windowRectFromProps())(this.props.transform)
+    this.drawingCtx.cubicBeziers(this.props.strokes.strokes["1"])(this._windowRectFromProps())(this.props.transform)
   }
 
   componentWillUnmount() {

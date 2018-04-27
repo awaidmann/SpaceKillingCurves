@@ -8,7 +8,7 @@ const INITIAL_STATE = {
 function dimensions(state = INITIAL_STATE, action) {
   switch(action.type) {
     case RESIZE:
-      return Object.assign({}, state, { width: action.width, height: action.height })
+      return Object.assign({}, state, action.dimensions)
     default:
       return state
   }

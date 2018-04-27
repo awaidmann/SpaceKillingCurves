@@ -9,7 +9,7 @@ const INITIAL_STATE = {
 function transform(state = INITIAL_STATE, action) {
   switch(action.type) {
     case TRANSFORM:
-      return Object.assign({}, state, { x: action.x, y: action.y, k: action.k })
+      return Object.assign({}, state, action.transform)
     default:
       return state
   }
