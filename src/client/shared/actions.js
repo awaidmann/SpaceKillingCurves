@@ -67,8 +67,11 @@ export function transform(newTransform, prevTransform) {
 }
 
 export function resize(newDimensions, prevDimensions) {
-  // TODO: check if new dimensions are sufficiently different from prevDimensions to initiate fetch
-  return fetchStrokes(["1"], { type: RESIZE, dimensions: newDimensions })
+  const resizeAction = { type: RESIZE, dimensions: newDimensions }
+  return newDimensions.width <= prevDimensions.width
+    && newDimensions.height <= prevDimensions.height
+    ? resizeAction
+    : fetchStrokes(["1"], resizeAction)
 }
 
 // TODO: handle pagination
