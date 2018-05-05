@@ -1,10 +1,10 @@
 export default class Geohash {
   constructor(minX, maxX, minY, maxY) {
-    this.minXBoundary = minX || GeoHash.MIN_BOUNDARY
-    this.maxXBoundary = maxX || GeoHash.MAX_BOUNDARY
+    this.minXBoundary = minX || GeoHash.minBoundary()
+    this.maxXBoundary = maxX || GeoHash.maxBoundary()
 
-    this.minYBoundary = minY || GeoHash.MIN_BOUNDARY
-    this.maxYBoundary = maxY || GeoHash.MAX_BOUNDARY
+    this.minYBoundary = minY || GeoHash.minBoundary()
+    this.maxYBoundary = maxY || GeoHash.maxBoundary()
   }
 
   static maxBoundary() {
