@@ -67,28 +67,28 @@ export default class Morton extends Curve {
           ? new QTNode(new QTSentinel(), new QTSentinel())
           : ySubQT
 
-        if (xSubQT.isSentinel() && ySubQT.l.isSentinel()) {
+        if (xSubQT.isSentinel() && ySubQT.left && ySubQT.left.isSentinel()) {
           subPaths = subPaths.concat(path.map(p => p + QTNode.leftPrefix()))
         } else {
           subPaths = subPaths.concat(
-            ySubQTExp.l && xSubQTExp.l
-              ? combineQuadTreesRec(xSubQTExp.l, ySubQTExp.l, path.map(p => p + QTNode.leftPrefix() + QTNode.leftPrefix()))
+            ySubQTExp.left && xSubQTExp.left
+              ? combineQuadTreesRec(xSubQTExp.left, ySubQTExp.left, path.map(p => p + QTNode.leftPrefix() + QTNode.leftPrefix()))
               : [],
-            ySubQTExp.l && xSubQTExp.r
-              ? combineQuadTreesRec(xSubQTExp.r, ySubQTExp.l, path.map(p => p + QTNode.leftPrefix() + QTNode.rightPrefix()))
+            ySubQTExp.left && xSubQTExp.right
+              ? combineQuadTreesRec(xSubQTExp.right, ySubQTExp.left, path.map(p => p + QTNode.leftPrefix() + QTNode.rightPrefix()))
               : []
           )
         }
 
-        if (xSubQT.isSentinel() && ySubQT.r.isSentinel()) {
+        if (xSubQT.isSentinel() && ySubQT.right && ySubQT.right.isSentinel()) {
           subPaths = subPaths.concat(path.map(p => p + QTNode.rightPrefix()))
         } else {
           subPaths = subPaths.concat(
-            ySubQTExp.r && xSubQTExp.l
-              ? combineQuadTreesRec(xSubQTExp.l, ySubQTExp.r, path.map(p => p + QTNode.rightPrefix() + QTNode.leftPrefix()))
+            ySubQTExp.right && xSubQTExp.left
+              ? combineQuadTreesRec(xSubQTExp.left, ySubQTExp.right, path.map(p => p + QTNode.rightPrefix() + QTNode.leftPrefix()))
               : [],
-            ySubQTExp.r && xSubQTExp.r
-              ? combineQuadTreesRec(xSubQTExp.r, ySubQTExp.r, path.map(p => p + QTNode.rightPrefix() + QTNode.rightPrefix()))
+            ySubQTExp.right && xSubQTExp.right
+              ? combineQuadTreesRec(xSubQTExp.right, ySubQTExp.right, path.map(p => p + QTNode.rightPrefix() + QTNode.rightPrefix()))
               : []
           )
         }
