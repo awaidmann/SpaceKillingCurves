@@ -1,4 +1,5 @@
 import beziers from '../../../data/spk_bezier_data.json'
+import projectDetails from '../../../data/spk_project.json'
 
 // Generic data retrieval action creators
 
@@ -36,20 +37,25 @@ export const FETCH_PROJECT = 'FETCH_PROJECT'
 export const FETCH_PROJECT_ERROR = 'FETCH_PROJECT_ERROR'
 export const FETCH_PROJECT_SUCCESS = 'FETCH_PROJECT_SUCCESS'
 
-export function selectProject(projectID) {
-  return { type: SELECT_PROJECT, projectID }
+export function selectProject(id, title) {
+  return { type: SELECT_PROJECT, id, title }
 }
 
-export function fetchProject(projectID) {
-  return { type: FETCH_PROJECT, projectID }
+export function fetchProject(id) {
+  return (dispatch, getState) => {
+    dispatch({ type: FETCH_PROJECT, id })
+    return Promise.resolve(projectDetails)
+      .then(resp => dispatch(fetchProjectSuccess(id, resp)))
+      .catch(error => dispatch(fetchProjectError(id, error)))
+  }
 }
 
-export function fetchProjectError(error) {
-  return errorAction(FETCH_PROJECT_ERROR, error)
+export function fetchProjectError(id, error) {
+  return { type: FETCH_PROJECT_ERROR, id, error }
 }
 
-export function fetchProjectSuccess(project) {
-  return successAction(FETCH_PROJECT_SUCCESS, project)
+export function fetchProjectSuccess(id, project) {
+  return { type: FETCH_PROJECT_SUCCESS, id, project }
 }
 
 // Data viewport/retrieval actions/functions
