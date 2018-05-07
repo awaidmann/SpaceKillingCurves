@@ -119,14 +119,14 @@ export default class Morton extends Curve {
     }
 
     if (adjPoint
-      && adjPoint.withinX(this.geoHash.minXBoundary, this.geoHash.maxXBoundary, true, true)
-      && adjPoint.withinY(this.geoHash.minYBoundary, this.geoHash.maxYBoundary, true, true)
+      && adjPoint.withinX(this.geohash.minXBoundary, this.geohash.maxXBoundary, true, true)
+      && adjPoint.withinY(this.geohash.minYBoundary, this.geohash.maxYBoundary, true, true)
     ) {
       return quadrantForPointRec(
-        this.geoHash.minXBoundary,
-        this.geoHash.maxXBoundary,
-        this.geoHash.minYBoundary,
-        this.geoHash.maxYBoundary
+        this.geohash.minXBoundary,
+        this.geohash.maxXBoundary,
+        this.geohash.minYBoundary,
+        this.geohash.maxYBoundary
       )
     } else {
       return

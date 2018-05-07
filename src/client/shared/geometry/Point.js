@@ -6,7 +6,7 @@ export default class Point {
 
   _within(min, max, minIncl, maxIncl, value) {
     return (minIncl ? value >= min : value > min)
-      && (maxInclu ? value <= max : value < max)
+      && (maxIncl ? value <= max : value < max)
   }
 
   withinX(min, max, minIncl, maxIncl) {
