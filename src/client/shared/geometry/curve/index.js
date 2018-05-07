@@ -1,2 +1,2 @@
-export * from './Morton'
-export * from './Hilbert'
+export { default as Morton } from './Morton'
+export { default as Hilbert } from './Hilbert'
