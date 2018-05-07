@@ -67,17 +67,17 @@ export const FETCH_STROKES = 'FETCH_STROKES'
 export const FETCH_STROKES_ERROR = 'FETCH_STROKES_ERROR'
 export const FETCH_STROKES_SUCCESS = 'FETCH_STROKES_SUCCESS'
 
-export function transform(newTransform, prevTransform) {
+export function transform(newTransform, prevTransform, searchPrefixes) {
   // TODO: check if new transform is sufficiently different from prevTransform to initiate fetch
-  return fetchStrokes(["1"], { type: TRANSFORM, transform: newTransform })
+  return fetchStrokes(searchPrefixes, { type: TRANSFORM, transform: newTransform })
 }
 
-export function resize(newDimensions, prevDimensions) {
+export function resize(newDimensions, prevDimensions, searchPrefixes) {
   const resizeAction = { type: RESIZE, dimensions: newDimensions }
   return newDimensions.width <= prevDimensions.width
     && newDimensions.height <= prevDimensions.height
     ? resizeAction
-    : fetchStrokes(["1"], resizeAction)
+    : fetchStrokes(searchPrefixes, resizeAction)
 }
 
 // TODO: handle pagination
@@ -88,9 +88,12 @@ export function fetchStrokes(searchPrefixes, intialAction) {
     // TODO: connect to data source methods
     return Promise.all(
       searchPrefixes.map(prefix => {
-        Promise.resolve(beziers)
-          .then(resp => dispatch(fetchStrokesSuccess(prefix, resp)))
-          .catch(error => dispatch(fetchStrokesError(prefix, error)))
+        const filtered = beziers.filter(b => b.morton.startsWith(prefix))
+        return filtered.length
+          ? Promise.resolve(filtered)
+            .then(resp => dispatch(fetchStrokesSuccess(prefix, resp)))
+            .catch(error => dispatch(fetchStrokesError(prefix, error)))
+          : Promise.resolve()
       }))
   }
 }
