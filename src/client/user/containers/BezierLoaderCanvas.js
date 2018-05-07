@@ -1,21 +1,26 @@
 import { connect } from 'react-redux'
 
-import { transform } from '../../shared/actions'
+import { prefixes } from '../utils/prefixes'
+import { transform, transformComplete, fetchStrokes } from '../../shared/actions'
 import Canvas from '../components/Canvas'
 
 const mapStateToProps = state => state
 
 const mapDispatchToProps = dispatch => ({
-  onTransform: (prevTransform, searchPrefixes) => {
-    return (newTransform) => dispatch(transform(newTransform, prevTransform, searchPrefixes))
+  onTransform: (newTransform) => dispatch(transform(newTransform)),
+  onTransformComplete: (transform, dimensions, project) => {
+    return () => {
+      const searchPrefixes = prefixes(transform, dimensions, project)
+      dispatch(transformComplete(transform, dimensions, searchPrefixes))
+      dispatch(fetchStrokes(searchPrefixes))
+    }
   }
 })
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
-  return Object.assign({}, ownProps, stateProps, {
-    onTransform: dispatchProps.onTransform(
-      stateProps.transform,
-      (stateProps.search || {}).viewPrefixes || [])
+  return Object.assign({}, ownProps, stateProps, dispatchProps, {
+    onTransformComplete: dispatchProps.onTransformComplete(
+      stateProps.transform, stateProps.dimensions, stateProps.project),
   })
 }
 

@@ -11,6 +11,7 @@ class Canvas extends React.Component {
 
     this.canvasRef = React.createRef()
     this._handleZoom = this._handleZoom.bind(this)
+    this._handleEnd = this._handleEnd.bind(this)
     this._windowRectFromProps = this._windowRectFromProps.bind(this)
   }
 
@@ -22,6 +23,10 @@ class Canvas extends React.Component {
     this.props.onTransform(d3event.transform)
   }
 
+  _handleEnd() {
+    this.props.onTransformComplete()
+  }
+
   _beziersFromProps() {
     return this.props.search.viewPrefixes
       .reduce((acc, pre) => {
@@ -31,7 +36,10 @@ class Canvas extends React.Component {
 
   componentDidMount() {
     this.canvasSelection = select(this.canvasRef.current)
-      .call(this.zoomBehavior.on('zoom', this._handleZoom))
+      .call(this.zoomBehavior
+        .on('zoom', this._handleZoom)
+        .on('end', this._handleEnd)
+      )
     this.drawingCtx = new Draw(this.canvasRef.current.getContext('2d'))
     this.drawingCtx.cubicBeziers(this._beziersFromProps())(this._windowRectFromProps())()
   }
@@ -42,6 +50,7 @@ class Canvas extends React.Component {
 
   componentWillUnmount() {
     this.canvasSelection.on('zoom', null)
+    this.canvasSelection.on('end', null)
   }
 
   render() {
