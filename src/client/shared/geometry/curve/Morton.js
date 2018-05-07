@@ -134,9 +134,8 @@ export default class Morton extends Curve {
   }
 
   quadrantRangesForSearch(viewRect, maxRanges) {
-    const topLeftCorner = new Point(viewRect.x, viewRect.y)
-    const topLeft = this.quadrantForPoint(topLeftCorner)
-    const bottomRight = this.quadrantForPoint(topLeftCorner.translate(viewRect.width, viewRect.height))
+    const topLeft = this.quadrantForPoint(viewRect.origin)
+    const bottomRight = this.quadrantForPoint(viewRect.extent)
 
     const ySearchTree = this._quadTreeForRanges(
       topLeft.filter((x, i) => i%2==0),
