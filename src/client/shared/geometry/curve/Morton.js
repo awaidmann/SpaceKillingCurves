@@ -57,7 +57,7 @@ export default class Morton extends Curve {
   _combineQuadTrees(xQT, yQT) {
     function combineQuadTreesRec(xSubQT, ySubQT, path) {
       if (!ySubQT || !xSubQT || (ySubQT.isSentinel() && xSubQT.isSentinel())) {
-        return path
+        return [path]
       } else {
         let subPaths = []
         const xSubQTExp = xSubQT.isSentinel()
@@ -68,34 +68,34 @@ export default class Morton extends Curve {
           : ySubQT
 
         if (xSubQT.isSentinel() && ySubQT.left && ySubQT.left.isSentinel()) {
-          subPaths = subPaths.concat(path.map(p => p + QTNode.leftPrefix()))
+          subPaths = subPaths.concat(path + QTNode.leftPrefix())
         } else {
           subPaths = subPaths.concat(
             ySubQTExp.left && xSubQTExp.left
-              ? combineQuadTreesRec(xSubQTExp.left, ySubQTExp.left, path.map(p => p + QTNode.leftPrefix() + QTNode.leftPrefix()))
+              ? combineQuadTreesRec(xSubQTExp.left, ySubQTExp.left, path + QTNode.leftPrefix() + QTNode.leftPrefix())
               : [],
             ySubQTExp.left && xSubQTExp.right
-              ? combineQuadTreesRec(xSubQTExp.right, ySubQTExp.left, path.map(p => p + QTNode.leftPrefix() + QTNode.rightPrefix()))
+              ? combineQuadTreesRec(xSubQTExp.right, ySubQTExp.left, path + QTNode.leftPrefix() + QTNode.rightPrefix())
               : []
           )
         }
 
         if (xSubQT.isSentinel() && ySubQT.right && ySubQT.right.isSentinel()) {
-          subPaths = subPaths.concat(path.map(p => p + QTNode.rightPrefix()))
+          subPaths = subPaths.concat(path + QTNode.rightPrefix())
         } else {
           subPaths = subPaths.concat(
             ySubQTExp.right && xSubQTExp.left
-              ? combineQuadTreesRec(xSubQTExp.left, ySubQTExp.right, path.map(p => p + QTNode.rightPrefix() + QTNode.leftPrefix()))
+              ? combineQuadTreesRec(xSubQTExp.left, ySubQTExp.right, path + QTNode.rightPrefix() + QTNode.leftPrefix())
               : [],
             ySubQTExp.right && xSubQTExp.right
-              ? combineQuadTreesRec(xSubQTExp.right, ySubQTExp.right, path.map(p => p + QTNode.rightPrefix() + QTNode.rightPrefix()))
+              ? combineQuadTreesRec(xSubQTExp.right, ySubQTExp.right, path + QTNode.rightPrefix() + QTNode.rightPrefix())
               : []
           )
         }
         return subPaths
       }
     }
-    return combineQuadTreesRec(xQT, yQT, [""])
+    return combineQuadTreesRec(xQT, yQT, "")
   }
 
   quadrantForPoint(point, threshold) {
