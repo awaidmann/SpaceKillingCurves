@@ -28,76 +28,118 @@ class QTSentinel extends QTNode {
   isSentinel() { return true }
 }
 
+function quadTreeForRanges(lower, upper) {
+  let t = new QTNode()
+
+  const lHead = lower[0]
+  const uHead = upper[0]
+
+  if (lHead != undefined && uHead != undefined && lHead == uHead) {
+    const range = quadTreeForRanges(lower.slice(1), upper.slice(1))
+    t = lHead
+      ? new QTNode(undefined, range)
+      : new QTNode(range, undefined)
+  } else if (lHead == 1) {
+    t = new QTNode(undefined, quadTreeForRanges(lower.slice(1), []))
+  } else if (uHead == 0) {
+    t = new QTNode(quadTreeForRanges([], upper.slice(1)), undefined)
+  } else {
+    t = new QTNode(
+      lHead == 0 ? quadTreeForRanges(lower.slice(1), []) : new QTSentinel(),
+      uHead == 1 ? quadTreeForRanges([], upper.slice(1)) : new QTSentinel()
+    )
+  }
+  return t.reduceIfSentinelNodes()
+}
+
+function reduceQuadTreeRanges(qtRanges, maxRanges) {
+  function reduceDepthSets(depthSets) {
+    const totalRanges = depthSets.reduce((cnt, set) => cnt + set.size, 0)
+    if (totalRanges > maxRanges) {
+      const diff = totalRanges - maxRanges
+      const parent = new Set(depthSets[depthSets.length - 2])
+      const deepest = new Set(depthSets[depthSets.length - 1])
+      const originalSize = deepest.size
+      const deepestIter = deepest.values()
+
+      const truncDepth = (depthSets.length - 1) * 2
+      while(originalSize > diff
+        ? deepest.size > diff
+        : deepest.size
+      ) {
+        const range = deepestIter.next().value
+        deepest.delete(range)
+        parent.add(range.slice(0, truncDepth))
+      }
+
+      return reduceDepthSets(depthSets
+        .slice(0, depthSets.length - 2)
+        .concat(deepest.size ? [parent, deepest] : [parent]))
+    } else {
+      return depthSets
+    }
+  }
+
+  const depthSets = qtRanges.reduce((qtSets, range) => {
+    const i = Math.ceil(range.length / 2)
+    qtSets[i] = (qtSets[i] || new Set()).add(range)
+    return qtSets
+  }, [])
+
+  return reduceDepthSets(depthSets)
+    .reduce((acc, set) => acc.concat(Array.from(set)), [])
+}
+
+function combineQuadTrees(xQT, yQT, maxRanges) {
+  function combineQuadTreesRec(xSubQT, ySubQT, path) {
+    if (!ySubQT || !xSubQT || (ySubQT.isSentinel() && xSubQT.isSentinel())) {
+      return [path]
+    } else {
+      let subPaths = []
+      const xSubQTExp = xSubQT.isSentinel()
+        ? new QTNode(new QTSentinel(), new QTSentinel())
+        : xSubQT
+      const ySubQTExp = ySubQT.isSentinel()
+        ? new QTNode(new QTSentinel(), new QTSentinel())
+        : ySubQT
+
+      if (xSubQT.isSentinel() && ySubQT.left && ySubQT.left.isSentinel()) {
+        subPaths = subPaths.concat(path + QTNode.leftPrefix())
+      } else {
+        subPaths = subPaths.concat(
+          ySubQTExp.left && xSubQTExp.left
+            ? combineQuadTreesRec(xSubQTExp.left, ySubQTExp.left, path + QTNode.leftPrefix() + QTNode.leftPrefix())
+            : [],
+          ySubQTExp.left && xSubQTExp.right
+            ? combineQuadTreesRec(xSubQTExp.right, ySubQTExp.left, path + QTNode.leftPrefix() + QTNode.rightPrefix())
+            : []
+        )
+      }
+
+      if (xSubQT.isSentinel() && ySubQT.right && ySubQT.right.isSentinel()) {
+        subPaths = subPaths.concat(path + QTNode.rightPrefix())
+      } else {
+        subPaths = subPaths.concat(
+          ySubQTExp.right && xSubQTExp.left
+            ? combineQuadTreesRec(xSubQTExp.left, ySubQTExp.right, path + QTNode.rightPrefix() + QTNode.leftPrefix())
+            : [],
+          ySubQTExp.right && xSubQTExp.right
+            ? combineQuadTreesRec(xSubQTExp.right, ySubQTExp.right, path + QTNode.rightPrefix() + QTNode.rightPrefix())
+            : []
+        )
+      }
+      return subPaths
+    }
+  }
+
+  return reduceQuadTreeRanges(
+    combineQuadTreesRec(xQT, yQT, ""),
+    maxRanges
+  )
+}
+
 
 export default class Morton extends Curve {
-  _quadTreeForRanges(lower, upper) {
-    let t = new QTNode()
-
-    const lHead = lower[0]
-    const uHead = upper[0]
-
-    if (lHead != undefined && uHead != undefined && lHead == uHead) {
-      const range = this._quadTreeForRanges(lower.slice(1), upper.slice(1))
-      t = lHead
-        ? new QTNode(undefined, range)
-        : new QTNode(range, undefined)
-    } else if (lHead == 1) {
-      t = new QTNode(undefined, this._quadTreeForRanges(lower.slice(1), []))
-    } else if (uHead == 0) {
-      t = new QTNode(this._quadTreeForRanges([], upper.slice(1)), undefined)
-    } else {
-      t = new QTNode(
-        lHead == 0 ? this._quadTreeForRanges(lower.slice(1), []) : new QTSentinel(),
-        uHead == 1 ? this._quadTreeForRanges([], upper.slice(1)) : new QTSentinel()
-      )
-    }
-    return t.reduceIfSentinelNodes()
-  }
-
-  _combineQuadTrees(xQT, yQT) {
-    function combineQuadTreesRec(xSubQT, ySubQT, path) {
-      if (!ySubQT || !xSubQT || (ySubQT.isSentinel() && xSubQT.isSentinel())) {
-        return [path]
-      } else {
-        let subPaths = []
-        const xSubQTExp = xSubQT.isSentinel()
-          ? new QTNode(new QTSentinel(), new QTSentinel())
-          : xSubQT
-        const ySubQTExp = ySubQT.isSentinel()
-          ? new QTNode(new QTSentinel(), new QTSentinel())
-          : ySubQT
-
-        if (xSubQT.isSentinel() && ySubQT.left && ySubQT.left.isSentinel()) {
-          subPaths = subPaths.concat(path + QTNode.leftPrefix())
-        } else {
-          subPaths = subPaths.concat(
-            ySubQTExp.left && xSubQTExp.left
-              ? combineQuadTreesRec(xSubQTExp.left, ySubQTExp.left, path + QTNode.leftPrefix() + QTNode.leftPrefix())
-              : [],
-            ySubQTExp.left && xSubQTExp.right
-              ? combineQuadTreesRec(xSubQTExp.right, ySubQTExp.left, path + QTNode.leftPrefix() + QTNode.rightPrefix())
-              : []
-          )
-        }
-
-        if (xSubQT.isSentinel() && ySubQT.right && ySubQT.right.isSentinel()) {
-          subPaths = subPaths.concat(path + QTNode.rightPrefix())
-        } else {
-          subPaths = subPaths.concat(
-            ySubQTExp.right && xSubQTExp.left
-              ? combineQuadTreesRec(xSubQTExp.left, ySubQTExp.right, path + QTNode.rightPrefix() + QTNode.leftPrefix())
-              : [],
-            ySubQTExp.right && xSubQTExp.right
-              ? combineQuadTreesRec(xSubQTExp.right, ySubQTExp.right, path + QTNode.rightPrefix() + QTNode.rightPrefix())
-              : []
-          )
-        }
-        return subPaths
-      }
-    }
-    return combineQuadTreesRec(xQT, yQT, "")
-  }
-
   quadrantForPoint(point, threshold) {
     const th = threshold !== undefined ? threshold : 1
     const adjPoint = point ? point.diff(this.origin) : undefined
@@ -137,17 +179,17 @@ export default class Morton extends Curve {
     const topLeft = this.quadrantForPoint(viewRect.origin)
     const bottomRight = this.quadrantForPoint(viewRect.extent)
 
-    const ySearchTree = this._quadTreeForRanges(
+    const ySearchTree = quadTreeForRanges(
       topLeft.filter((x, i) => i%2==0),
       bottomRight.filter((x, i) => i%2==0),
       []
     )
-    const xSearchTree = this._quadTreeForRanges(
+    const xSearchTree = quadTreeForRanges(
       topLeft.filter((x, i) => i%2==1),
       bottomRight.filter((x, i) => i%2==1),
       []
     )
 
-    return this._combineQuadTrees(xSearchTree, ySearchTree)
+    return combineQuadTrees(xSearchTree, ySearchTree, maxRanges)
   }
 }
