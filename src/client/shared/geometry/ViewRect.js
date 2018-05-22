@@ -16,9 +16,10 @@ export default class ViewRect {
   scalePositionPreserving(scaleX, scaleY) {
     return new ViewRect(
       this.origin,
-      this.extent
-        .scale(scaleX, scaleY)
-        .translate(this.origin.x, this.origin.y)
+      this.origin.translate(
+        this.width() * (scaleX || 1),
+        this.height() * (scaleY || 1)
+      )
     )
   }
 
