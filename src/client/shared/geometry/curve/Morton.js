@@ -198,12 +198,12 @@ export default class Morton extends Curve {
     function rectForQuadrantRec(quad, boundary) {
       if (quad && quad.length) {
         const current = quad.slice(0, 2)
-        const scaled = boundary.scalePositionPreserving(0.5, 1/current.length)
+        const scaled = boundary.scalePositionPreserving(1/current.length, 0.5)
         return rectForQuadrantRec(
           quad.slice(2),
           scaled.translate(
-            current[0] == QTNode.rightPrefix() ? scaled.width() : 0,
-            current[1] == QTNode.rightPrefix() ? scaled.height() : 0
+            current[1] == QTNode.rightPrefix() ? scaled.width() : 0,
+            current[0] == QTNode.rightPrefix() ? scaled.height() : 0
           )
         )
       } else {
