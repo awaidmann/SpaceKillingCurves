@@ -38,3 +38,10 @@ export function prefixes(transform, dimensions, project) {
         (currentProject(project) || {}).details.queryLimit)
     : []
 }
+
+export function rectsForQuadrantPrefixes(project, prefixes) {
+  const curve = curveForProjectState(project)
+  return (curve && prefixes)
+    ? prefixes.map(prefix => curve.rectForQuadrant(prefix).toCanvasRect())
+    : []
+}

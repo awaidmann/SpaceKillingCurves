@@ -37,4 +37,13 @@ export default class ViewRect {
   height() {
     return this.extent.diff(this.origin).y
   }
+
+  toCanvasRect() {
+    return {
+      x: this.origin.x,
+      y: this.origin.y,
+      width: this.width(),
+      height: this.height(),
+    }
+  }
 }

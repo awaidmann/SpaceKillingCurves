@@ -3,6 +3,7 @@ import { zoom } from 'd3-zoom'
 import { select, event as d3event } from 'd3-selection'
 
 import Draw from '../../shared/Draw'
+import { rectsForQuadrantPrefixes } from '../utils/prefixes'
 
 class Canvas extends React.Component {
   constructor(props) {
@@ -34,6 +35,13 @@ class Canvas extends React.Component {
       }, [])
   }
 
+  _searchRectsFromProps() {
+    return rectsForQuadrantPrefixes(
+      this.props.project,
+      this.props.search.viewPrefixes
+    )
+  }
+
   componentDidMount() {
     this.canvasSelection = select(this.canvasRef.current)
       .call(this.zoomBehavior
@@ -44,7 +52,8 @@ class Canvas extends React.Component {
     const beziers = this._beziersFromProps()
     this.drawingCtx.pipeline(
       Draw.origin((beziers[0] || {}).start),
-      Draw.cubicBeziers(beziers)
+      Draw.cubicBeziers(beziers),
+      Draw.boundingRects(this._searchRectsFromProps())
     )(this._windowRectFromProps())()
   }
 
@@ -52,7 +61,8 @@ class Canvas extends React.Component {
     const beziers = this._beziersFromProps()
     this.drawingCtx.pipeline(
       Draw.origin((beziers[0] || {}).start),
-      Draw.cubicBeziers(beziers)
+      Draw.cubicBeziers(beziers),
+      Draw.boundingRects(this._searchRectsFromProps())
     )(this._windowRectFromProps())(this.props.transform)
   }
 
