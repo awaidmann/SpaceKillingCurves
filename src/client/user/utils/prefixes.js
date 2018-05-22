@@ -3,18 +3,20 @@ import Point from '../../shared/geometry/Point'
 import ViewRect from '../../shared/geometry/ViewRect'
 import { Morton } from '../../shared/geometry/curve'
 
+function currentProject(project) {
+  if (project) return project.projects[project.current.id]
+}
+
 function curveForProjectState(project) {
-  if (project) {
-    const current = project.projects[project.current.id]
-    if (current) {
-      const bounds = current.details.geohash
-      return current.details.curve === 'morton'
-        ? new Morton(
-            new Geohash(bounds.xMin, bounds.xMax, bounds.yMin, bounds.yMax),
-            new Point(current.details.origin.x, current.details.origin.y)
-          )
-        : undefined
-    }
+  const current = currentProject(project)
+  if (current) {
+    const bounds = current.details.geohash
+    return current.details.curve === 'morton'
+      ? new Morton(
+          new Geohash(bounds.xMin, bounds.xMax, bounds.yMin, bounds.yMax),
+          new Point(current.details.origin.x, current.details.origin.y)
+        )
+      : undefined
   }
 }
 
@@ -31,6 +33,8 @@ function computeViewRect(transform, dimensions) {
 export function prefixes(transform, dimensions, project) {
   const curve = curveForProjectState(project)
   return curve
-    ? curve.quadrantRangesForSearch(computeViewRect(transform, dimensions))
+    ? curve.quadrantRangesForSearch(
+        computeViewRect(transform, dimensions),
+        (currentProject(project) || {}).details.queryLimit)
     : []
 }
