@@ -41,11 +41,19 @@ class Canvas extends React.Component {
         .on('end', this._handleEnd)
       )
     this.drawingCtx = new Draw(this.canvasRef.current.getContext('2d'))
-    this.drawingCtx.cubicBeziers(this._beziersFromProps())(this._windowRectFromProps())()
+    const beziers = this._beziersFromProps()
+    this.drawingCtx.pipeline(
+      Draw.origin((beziers[0] || {}).start),
+      Draw.cubicBeziers(beziers)
+    )(this._windowRectFromProps())()
   }
 
   componentDidUpdate() {
-    this.drawingCtx.cubicBeziers(this._beziersFromProps())(this._windowRectFromProps())(this.props.transform)
+    const beziers = this._beziersFromProps()
+    this.drawingCtx.pipeline(
+      Draw.origin((beziers[0] || {}).start),
+      Draw.cubicBeziers(beziers)
+    )(this._windowRectFromProps())(this.props.transform)
   }
 
   componentWillUnmount() {
