@@ -43,17 +43,24 @@ class Draw {
     }
   }
 
+  static _collection(ctx, style, coll, collApply) {
+    if (ctx && coll && coll.length) {
+      ctx.lineWidth = style.lineWidth
+      ctx.strokeStyle = style.strokeStyle
+      ctx.fillStyle = style.fillStyle
+
+      coll.forEach(x => collApply(ctx, x))
+    }
+  }
+
   static cubicBeziers(beziers) {
     return (ctx, style) => {
-      if (ctx && beziers && beziers.length) {
-        const bezierStyle = Object.assign({}, style.default, style.bezier)
-
-        ctx.lineWidth = bezierStyle.lineWidth
-        ctx.strokeStyle = bezierStyle.strokeStyle
-        ctx.fillStyle = bezierStyle.fillStyle
-
-        beziers.forEach(bezier => Draw._cubicBezier(ctx, bezier))
-      }
+      Draw._collection(
+        ctx,
+        Object.assign({}, style.default, style.bezier),
+        beziers,
+        Draw._cubicBezier
+      )
     }
   }
 
@@ -87,6 +94,25 @@ class Draw {
       ctx.beginPath()
       ctx.arc(cp.x, cp.y, radius, 0, 2*Math.PI)
       ctx.fill()
+    }
+  }
+
+  static boundingRects(rects) {
+    return (ctx, style) => {
+      Draw._collection(
+        ctx,
+        Object.assign({}, style.default, style.rect),
+        rects,
+        Draw._rect
+      )
+    }
+  }
+
+  static _rect(ctx, rect) {
+    if (ctx && rect) {
+      ctx.beginPath()
+      ctx.rect(rect.x, rect.y, rect.width, rect.height)
+      ctx.stroke()
     }
   }
 }
