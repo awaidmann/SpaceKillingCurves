@@ -18,4 +18,6 @@ export default class Curve {
   }
 
   quadrantRangesForSearch(viewRect, maxRanges) {}
+
+  rectForQuadrant(quadrant) {}
 }

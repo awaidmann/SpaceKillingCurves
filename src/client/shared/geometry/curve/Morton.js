@@ -1,4 +1,5 @@
 import Point from '../Point'
+import ViewRect from '../ViewRect'
 import Curve from './Curve'
 
 class QTNode {
@@ -191,5 +192,30 @@ export default class Morton extends Curve {
     )
 
     return combineQuadTrees(xSearchTree, ySearchTree, maxRanges)
+  }
+
+  rectForQuadrant(quadrant) {
+    function rectForQuadrantRec(quad, boundary) {
+      if (quad && quad.length) {
+        const current = quad.slice(0, 2)
+        const scaled = boundary.scalePositionPreserving(0.5, 1/current.length)
+        return rectForQuadrantRec(
+          quad.slice(2),
+          scaled.translate(
+            current[0] == QTNode.rightPrefix() ? scaled.width() : 0,
+            current[1] == QTNode.rightPrefix() ? scaled.height() : 0
+          )
+        )
+      } else {
+        return boundary
+      }
+    }
+
+    return rectForQuadrantRec(
+      quadrant,
+      new ViewRect(
+        new Point(this.geohash.minXBoundary, this.geohash.minYBoundary),
+        new Point(this.geohash.maxXBoundary, this.geohash.maxYBoundary)
+      ))
   }
 }
