@@ -8,10 +8,6 @@ export default class Curve {
 
   quadrantForPoint(point, threshold) {}
 
-  quadrantForBezier(bezier, threshold) {
-    return this.quadrantForPointAsString(bezier.boundingBox().center, threshold)
-  }
-
   quadrantForPointAsString(point, threshold) {
     var quad = this.quadrantForPoint(point, threshold)
     return quad ? quad.reduce((s, q) => s+q, "") : ""
