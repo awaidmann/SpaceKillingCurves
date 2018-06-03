@@ -1,4 +1,4 @@
-import beziers from '../../../data/spk_bezier_data.json'
+import tiles from '../../../data/spk_mixed_data.json'
 import projectDetails from '../../../data/spk_project.json'
 
 // Generic data retrieval action creators
@@ -87,7 +87,7 @@ export function fetchStrokes(searchPrefixes) {
     // TODO: connect to data source methods
     return Promise.all(
       searchPrefixes.map(prefix => {
-        const filtered = beziers.filter(b => b.morton.startsWith(prefix))
+        const filtered = tiles.filter(b => b.morton.startsWith(prefix))
         return filtered.length
           ? Promise.resolve(filtered)
             .then(resp => dispatch(fetchStrokesSuccess(prefix, resp)))

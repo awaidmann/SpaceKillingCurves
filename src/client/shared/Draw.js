@@ -15,6 +15,10 @@ export const DEFAULT_STYLE = {
   }
 }
 
+const TILE_TYPE = {
+  BEZIER: "bezier"
+}
+
 class Draw {
   constructor(ctx, style) {
     this.ctx = ctx
@@ -51,6 +55,31 @@ class Draw {
 
       coll.forEach(x => collApply(ctx, x))
     }
+  }
+
+  static _applyForType(type) {
+    switch(type) {
+      case TILE_TYPE.BEZIER:
+        return Draw._cubicBezier
+      default:
+        return () => { console.log('unkonwn tile type: ' + type) }
+    }
+  }
+
+  static tiles(tiles) {
+    return (ctx, style) => {
+      if (ctx && style && tiles) {
+        tiles.forEach(
+          tile => {
+            const type = tile.data.type
+            const tileStyle = Object.assign({}, style.default, style[type])
+
+            ctx.lineWidth = tileStyle.lineWidth
+            ctx.strokeStyle = tileStyle.strokeStyle
+            ctx.fillStyle = tileStyle.fillStyle
+            Draw._applyForType(type)(ctx, tile.data)
+          })
+      }}
   }
 
   static cubicBeziers(beziers) {

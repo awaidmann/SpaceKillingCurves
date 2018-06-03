@@ -1,6 +1,6 @@
 import React from 'react'
 
-import BezierLoaderCanvas from '../containers/BezierLoaderCanvas'
+import TileLoaderCanvas from '../containers/TileLoaderCanvas'
 import ProjectDetailsLoader from '../containers/ProjectDetailsLoader'
 
 class App extends React.Component {
@@ -26,7 +26,7 @@ class App extends React.Component {
     return (
       <div>
         <ProjectDetailsLoader />
-        <BezierLoaderCanvas />
+        <TileLoaderCanvas />
       </div>
     )
   }

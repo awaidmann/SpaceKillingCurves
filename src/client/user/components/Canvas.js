@@ -28,7 +28,7 @@ class Canvas extends React.Component {
     this.props.onTransformComplete()
   }
 
-  _beziersFromProps() {
+  _tilesFromProps() {
     return this.props.search.viewPrefixes
       .reduce((acc, pre) => {
         return acc.concat(this.props.strokes.strokes[pre] || [])
@@ -49,19 +49,15 @@ class Canvas extends React.Component {
         .on('end', this._handleEnd)
       )
     this.drawingCtx = new Draw(this.canvasRef.current.getContext('2d'))
-    const beziers = this._beziersFromProps()
     this.drawingCtx.pipeline(
-      Draw.origin((beziers[0] || {}).start),
-      Draw.cubicBeziers(beziers),
+      Draw.tiles(this._tilesFromProps()),
       Draw.boundingRects(this._searchRectsFromProps())
     )(this._windowRectFromProps())()
   }
 
   componentDidUpdate() {
-    const beziers = this._beziersFromProps()
     this.drawingCtx.pipeline(
-      Draw.origin((beziers[0] || {}).start),
-      Draw.cubicBeziers(beziers),
+      Draw.tiles(this._tilesFromProps()),
       Draw.boundingRects(this._searchRectsFromProps())
     )(this._windowRectFromProps())(this.props.transform)
   }
