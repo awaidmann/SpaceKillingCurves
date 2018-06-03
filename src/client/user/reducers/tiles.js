@@ -1,37 +1,37 @@
 import {
-  FETCH_STROKES,
-  FETCH_STROKES_ERROR,
-  FETCH_STROKES_SUCCESS
+  FETCH_TILES,
+  FETCH_TILES_ERROR,
+  FETCH_TILES_SUCCESS
 } from '../../shared/actions'
 
 const INITIAL_STATE = {
   pendingPrefixes: [],
   errors: {},
-  strokes: {},
+  tiles: {},
 }
 
 function filterPrefix(pending, prefix) {
   return prefix ? pending.filter(p => !(p === prefix)) : pending
 }
 
-function strokes(state = INITIAL_STATE, action) {
+function tiles(state = INITIAL_STATE, action) {
   switch(action.type) {
-    case FETCH_STROKES:
+    case FETCH_TILES:
       return Object.assign({}, state, {
         pendingPrefixes: (state.pendingPrefixes || []).concat(action.searchPrefixes),
       })
-    case FETCH_STROKES_ERROR:
+    case FETCH_TILES_ERROR:
       return Object.assign({}, state, {
         pendingPrefixes: filterPrefix(state.pendingPrefixes, action.prefix),
         errors: Object.assign({}, state.errors, {
           [action.prefix]: action.error
         })
       })
-    case FETCH_STROKES_SUCCESS:
+    case FETCH_TILES_SUCCESS:
       return Object.assign({}, state, {
         pendingPrefixes: filterPrefix(state.pendingPrefixes, action.prefix),
-        strokes: Object.assign({}, state.strokes, {
-          [action.prefix]: action.strokes
+        tiles: Object.assign({}, state.tiles, {
+          [action.prefix]: action.tiles
         })
       })
     default:
@@ -39,4 +39,4 @@ function strokes(state = INITIAL_STATE, action) {
   }
 }
 
-export default strokes
+export default tiles

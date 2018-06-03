@@ -64,9 +64,9 @@ export const TRANSFORM = 'TRANSFORM'
 export const RESIZE = 'RESIZE'
 export const TRANSFORM_COMPLETE = 'TRANSFORM_COMPLETE'
 
-export const FETCH_STROKES = 'FETCH_STROKES'
-export const FETCH_STROKES_ERROR = 'FETCH_STROKES_ERROR'
-export const FETCH_STROKES_SUCCESS = 'FETCH_STROKES_SUCCESS'
+export const FETCH_TILES = 'FETCH_TILES'
+export const FETCH_TILES_ERROR = 'FETCH_TILES_ERROR'
+export const FETCH_TILES_SUCCESS = 'FETCH_TILES_SUCCESS'
 
 export function transform(transform) {
   return { type: TRANSFORM, transform }
@@ -81,26 +81,26 @@ export function transformComplete(transform, dimensions, viewPrefixes) {
 }
 
 // TODO: handle pagination
-export function fetchStrokes(searchPrefixes) {
+export function fetchTiles(searchPrefixes) {
   return (dispatch, getState) => {
-    dispatch({ type: FETCH_STROKES, searchPrefixes })
+    dispatch({ type: FETCH_TILES, searchPrefixes })
     // TODO: connect to data source methods
     return Promise.all(
       searchPrefixes.map(prefix => {
         const filtered = tiles.filter(b => b.morton.startsWith(prefix))
         return filtered.length
           ? Promise.resolve(filtered)
-            .then(resp => dispatch(fetchStrokesSuccess(prefix, resp)))
-            .catch(error => dispatch(fetchStrokesError(prefix, error)))
+            .then(resp => dispatch(fetchTilesSuccess(prefix, resp)))
+            .catch(error => dispatch(fetchTilesError(prefix, error)))
           : Promise.resolve()
       }))
   }
 }
 
-export function fetchStrokesError(prefix, error) {
-  return { type: FETCH_STROKES_ERROR, prefix, error }
+export function fetchTilesError(prefix, error) {
+  return { type: FETCH_TILES_ERROR, prefix, error }
 }
 
-export function fetchStrokesSuccess(prefix, strokes) {
-  return { type: FETCH_STROKES_SUCCESS, prefix, strokes }
+export function fetchTilesSuccess(prefix, tiles) {
+  return { type: FETCH_TILES_SUCCESS, prefix, tiles }
 }

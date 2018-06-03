@@ -1,7 +1,7 @@
 import { connect } from 'react-redux'
 
 import { prefixes } from '../utils/prefixes'
-import { resize, transformComplete, fetchStrokes } from '../../shared/actions'
+import { resize, transformComplete, fetchTiles } from '../../shared/actions'
 import App from '../components/App'
 
 const mapStateToProps = state => state
@@ -14,7 +14,7 @@ const mapDispatchToProps = dispatch => ({
 
       const searchPrefixes = prefixes(transform, dimensions, project)
       dispatch(transformComplete(transform, dimensions, searchPrefixes))
-      dispatch(fetchStrokes(searchPrefixes))
+      dispatch(fetchTiles(searchPrefixes))
     }
   }
 })
