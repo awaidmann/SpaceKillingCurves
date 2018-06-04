@@ -3,11 +3,18 @@ import {
   FETCH_TILES_ERROR,
   FETCH_TILES_SUCCESS
 } from '../../shared/actions'
+import QueryCache from '../../shared/QueryCache'
 
 const INITIAL_STATE = {
   pendingPrefixes: [],
   errors: {},
-  tiles: {},
+  // TODO: setup cache params with project specific details
+  cache: new QueryCache(
+    [], [],
+    (x) => x ? x.morton : "2",
+    (a, b) => b.startsWith(a) ? 0 : b < a ? 1 : -1,
+    undefined
+  )
 }
 
 function filterPrefix(pending, prefix) {
@@ -30,9 +37,7 @@ function tiles(state = INITIAL_STATE, action) {
     case FETCH_TILES_SUCCESS:
       return Object.assign({}, state, {
         pendingPrefixes: filterPrefix(state.pendingPrefixes, action.prefix),
-        tiles: Object.assign({}, state.tiles, {
-          [action.prefix]: action.tiles
-        })
+        cache: state.cache.add(action.prefix, action.tiles)
       })
     default:
       return state
