@@ -216,6 +216,6 @@ export default class Morton extends Curve {
       new ViewRect(
         new Point(this.geohash.minXBoundary, this.geohash.minYBoundary),
         new Point(this.geohash.maxXBoundary, this.geohash.maxYBoundary)
-      ))
+      )).translate(this.origin.x, this.origin.y)
   }
 }
