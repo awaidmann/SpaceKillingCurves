@@ -25,7 +25,8 @@ function tiles(state = INITIAL_STATE, action) {
   switch(action.type) {
     case FETCH_TILES:
       return Object.assign({}, state, {
-        pendingPrefixes: (state.pendingPrefixes || []).concat(action.searchPrefixes),
+        pendingPrefixes: (state.pendingPrefixes || [])
+          .concat(action.searchPrefixes.filter(p => !state.cache.has(p))),
       })
     case FETCH_TILES_ERROR:
       return Object.assign({}, state, {

@@ -29,10 +29,7 @@ class Canvas extends React.Component {
   }
 
   _tilesFromProps() {
-    return this.props.search.viewPrefixes
-      .reduce((acc, pre) => {
-        return acc.concat(this.props.tiles.cache.get(pre))
-      }, [])
+    return this.props.tiles.cache.getFromKeys(this.props.search.viewPrefixes)
   }
 
   _searchRectsFromProps() {

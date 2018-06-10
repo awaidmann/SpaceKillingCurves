@@ -71,6 +71,7 @@ class Draw {
       if (ctx && style && tiles) {
         tiles.forEach(
           tile => {
+            if (!tile || !tile.data) return
             const type = tile.data.type
             const tileStyle = Object.assign({}, style.default, style[type])
 
