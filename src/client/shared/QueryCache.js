@@ -1,9 +1,9 @@
-import { Set, Seq, List } from 'immutable'
+import { Set, Seq, List, isImmutable } from 'immutable'
 
 export default class QueryCache {
   constructor(cacheKeys, cache, accessor, searchComparator, sortComparator) {
-    this.cacheKeys = Set(cacheKeys || [])
-    this.cache = new Seq.Indexed(cache || [])
+    this.cacheKeys = isImmutable(cacheKeys) ? cacheKeys : Set(cacheKeys || [])
+    this.cache = isImmutable(cache) ? cache : new Seq.Indexed(cache || [])
     this.accessor = accessor || (x => x)
     this.searchComparator = searchComparator || ((a, b) => a <= b ? 1 : -1)
     this.sortComparator = sortComparator
