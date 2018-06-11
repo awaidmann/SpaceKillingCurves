@@ -10,11 +10,11 @@ function currentProject(project) {
 function curveForProjectState(project) {
   const current = currentProject(project)
   if (current) {
-    const bounds = current.details.geohash
-    return current.details.curve === 'morton'
+    const bounds = current.geohash
+    return current.curve === 'morton'
       ? new Morton(
           new Geohash(bounds.xMin, bounds.xMax, bounds.yMin, bounds.yMax),
-          new Point(current.details.origin.x, current.details.origin.y)
+          new Point(current.origin.x, current.origin.y)
         )
       : undefined
   }
@@ -35,7 +35,7 @@ export function prefixes(transform, dimensions, project) {
   return curve
     ? curve.quadrantRangesForSearch(
         computeViewRect(transform, dimensions),
-        (currentProject(project) || {}).details.queryLimit)
+        (currentProject(project) || {}).queryLimit)
     : []
 }
 
