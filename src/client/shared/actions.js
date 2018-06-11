@@ -1,15 +1,6 @@
 import tiles from '../../../data/spk_mixed_data.json'
+import config from '../../../data/spk_app_config.json'
 import projectDetails from '../../../data/spk_project.json'
-
-// Generic data retrieval action creators
-
-function errorAction(type, error) {
-  return { type, error }
-}
-
-function successAction(type, data) {
-  return { type, data }
-}
 
 // Config retrieval actions/functions
 
@@ -18,15 +9,23 @@ export const FETCH_CONFIG_ERROR = 'FETCH_CONFIG_ERROR'
 export const FETCH_CONFIG_SUCCESS = 'FETCH_CONFIG_SUCCESS'
 
 export function fetchConfig() {
-  return { type: FETCH_CONFIG }
+  return (dispatch, getState) => {
+    dispatch({ type: FETCH_CONFIG })
+    return Promise.resolve(config)
+      .then(resp => {
+        dispatch(fetchConfigSuccess(resp))
+        dispatch(fetchProject(resp.default))
+      })
+      .catch(error => dispatch(fetchConfigError(error)))
+  }
 }
 
 export function fetchConfigError(error) {
-  return errorAction(FETCH_CONFIG_ERROR, error)
+  return { type: FETCH_CONFIG_ERROR, error }
 }
 
 export function fetchConfigSuccess(config) {
-  return successAction(FETCH_CONFIG_SUCCESS, config)
+  return { type: FETCH_CONFIG_SUCCESS, config }
 }
 
 // Project selection/retrieval actions/functions
