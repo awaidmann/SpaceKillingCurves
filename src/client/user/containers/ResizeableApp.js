@@ -1,6 +1,7 @@
 import { connect } from 'react-redux'
 
 import { prefixes } from '../utils/prefixes'
+import { currentProject } from '../utils/currentProject'
 import { resize, transformComplete, fetchTiles } from '../../shared/actions'
 import App from '../components/App'
 
@@ -21,7 +22,9 @@ const mapDispatchToProps = dispatch => ({
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
   return Object.assign({}, ownProps, stateProps, {
-    onResize: dispatchProps.onResize(stateProps.transform, stateProps.project)
+    onResize: dispatchProps.onResize(
+      stateProps.transform,
+      currentProject(stateProps.project, stateProps.settings))
   })
 }
 

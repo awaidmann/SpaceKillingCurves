@@ -1,5 +1,8 @@
 import React from 'react'
 
+import ProjectDetails from './ProjectDetails'
+import { currentProject } from '../utils/currentProject'
+
 export default class Menu extends React.Component {
   componentDidMount() {
     this.props.onAppLoad()
@@ -7,10 +10,11 @@ export default class Menu extends React.Component {
 
   _projectsFromProps() {
     return this.props.config.config
-      ? this.props.config.config.projects
+      ? Object.values(this.props.config.config.projects)
         .map(project =>
           <li key={project.id}
-            onClick={() => this.props.onSelectProject(project.id)}>
+            onClick={() => this.props
+              .onSelectProject(project.id, project.title, project.lastUpdated)}>
             { project.title }
           </li>)
       : []
@@ -22,6 +26,11 @@ export default class Menu extends React.Component {
         <div>
           <ul>{ this._projectsFromProps() }</ul>
         </div>
+        <ProjectDetails
+          currentProject={
+            currentProject(this.props.project, this.props.settings) || {}
+          }
+        />
       </div>
     )
   }

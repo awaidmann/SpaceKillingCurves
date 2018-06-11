@@ -4,6 +4,7 @@ import { select, event as d3event } from 'd3-selection'
 
 import Draw from '../../shared/Draw'
 import { rectsForQuadrantPrefixes } from '../utils/prefixes'
+import { currentProject } from '../utils/currentProject'
 
 class Canvas extends React.Component {
   constructor(props) {
@@ -34,8 +35,8 @@ class Canvas extends React.Component {
 
   _searchRectsFromProps() {
     return rectsForQuadrantPrefixes(
-      this.props.project,
-      this.props.search.viewPrefixes
+      this.props.search.viewPrefixes,
+      currentProject(this.props.project, this.props.settings)
     )
   }
 

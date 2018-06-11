@@ -15,6 +15,8 @@ export function fetchConfig() {
       .then(resp => {
         dispatch(fetchConfigSuccess(resp))
         dispatch(fetchProject(resp.default))
+        const outline = resp.projects[resp.default] || {}
+        dispatch(selectProject(outline.id, outline.title, outline.lastUpdated))
       })
       .catch(error => dispatch(fetchConfigError(error)))
   }
@@ -32,13 +34,13 @@ export function fetchConfigSuccess(config) {
 
 export const SELECT_PROJECT = 'SELECT_PROJECT'
 
+export function selectProject(id, title, lastUpdated) {
+  return { type: SELECT_PROJECT, id, title, lastUpdated }
+}
+
 export const FETCH_PROJECT = 'FETCH_PROJECT'
 export const FETCH_PROJECT_ERROR = 'FETCH_PROJECT_ERROR'
 export const FETCH_PROJECT_SUCCESS = 'FETCH_PROJECT_SUCCESS'
-
-export function selectProject(id, title) {
-  return { type: SELECT_PROJECT, id, title }
-}
 
 export function fetchProject(id) {
   return (dispatch, getState) => {

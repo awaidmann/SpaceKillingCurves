@@ -3,18 +3,13 @@ import Point from '../../shared/geometry/Point'
 import ViewRect from '../../shared/geometry/ViewRect'
 import { Morton } from '../../shared/geometry/curve'
 
-function currentProject(project) {
-  if (project) return project.projects[project.current.id]
-}
-
-function curveForProjectState(project) {
-  const current = currentProject(project)
-  if (current) {
-    const bounds = current.geohash
-    return current.curve === 'morton'
+function curveForProjectState(currentProject) {
+  if (currentProject) {
+    const bounds = currentProject.geohash
+    return currentProject.curve === 'morton'
       ? new Morton(
           new Geohash(bounds.xMin, bounds.xMax, bounds.yMin, bounds.yMax),
-          new Point(current.origin.x, current.origin.y)
+          new Point(currentProject.origin.x, currentProject.origin.y)
         )
       : undefined
   }
@@ -30,17 +25,17 @@ function computeViewRect(transform, dimensions) {
     .scale(1/transform.k, 1/transform.k)
 }
 
-export function prefixes(transform, dimensions, project) {
-  const curve = curveForProjectState(project)
+export function prefixes(transform, dimensions, currentProject) {
+  const curve = curveForProjectState(currentProject)
   return curve
     ? curve.quadrantRangesForSearch(
         computeViewRect(transform, dimensions),
-        (currentProject(project) || {}).queryLimit)
+        currentProject.queryLimit)
     : []
 }
 
-export function rectsForQuadrantPrefixes(project, prefixes) {
-  const curve = curveForProjectState(project)
+export function rectsForQuadrantPrefixes(prefixes, currentProject) {
+  const curve = curveForProjectState(currentProject)
   return (curve && prefixes)
     ? prefixes.map(prefix => curve.rectForQuadrant(prefix).toCanvasRect())
     : []

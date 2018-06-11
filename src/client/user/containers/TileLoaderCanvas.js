@@ -1,6 +1,7 @@
 import { connect } from 'react-redux'
 
 import { prefixes } from '../utils/prefixes'
+import { currentProject } from '../utils/currentProject'
 import { transform, transformComplete, fetchTiles } from '../../shared/actions'
 import Canvas from '../components/Canvas'
 
@@ -20,7 +21,9 @@ const mapDispatchToProps = dispatch => ({
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
   return Object.assign({}, ownProps, stateProps, dispatchProps, {
     onTransformComplete: dispatchProps.onTransformComplete(
-      stateProps.transform, stateProps.dimensions, stateProps.project),
+      stateProps.transform,
+      stateProps.dimensions,
+      currentProject(stateProps.project, stateProps.settings)),
   })
 }
 

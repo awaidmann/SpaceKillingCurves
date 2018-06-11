@@ -1,12 +1,10 @@
 import {
-  SELECT_PROJECT,
   FETCH_PROJECT,
   FETCH_PROJECT_ERROR,
   FETCH_PROJECT_SUCCESS
 } from '../../shared/actions'
 
 const INITIAL_STATE = {
-  current: {},
   fetching: undefined,
   projects: {}
 }
@@ -17,10 +15,6 @@ function isFetchingStatus(state, action) {
 
 function project(state = INITIAL_STATE, action) {
   switch(action.type) {
-    case SELECT_PROJECT:
-      return Object.assign({}, state, {
-        current: { id: action.id, title: action.title }
-      })
     case FETCH_PROJECT:
       return Object.assign({}, state, { fetching: action.id })
     case FETCH_PROJECT_SUCCESS:
