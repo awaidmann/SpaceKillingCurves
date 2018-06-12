@@ -9,7 +9,7 @@ import Menu from '../components/Menu'
 const mapStateToProps = state => state
 
 const mapDispatchToProps = dispatch => ({
-  onSelectProject: (transform, dimensions, projects) => {
+  onProjectSelect: (transform, dimensions, projects) => {
     return (id, title, lastUpdated) => {
       dispatch(selectProject(id, title, lastUpdated))
       projects[id]
@@ -21,7 +21,7 @@ const mapDispatchToProps = dispatch => ({
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
   return Object.assign({}, ownProps, stateProps, dispatchProps, {
-    onSelectProject: dispatchProps.onSelectProject(
+    onProjectSelect: dispatchProps.onProjectSelect(
       stateProps.transform,
       stateProps.dimensions,
       stateProps.project.projects)
