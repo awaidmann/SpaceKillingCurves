@@ -1,22 +1,22 @@
 import tiles from '../../../data/spk_mixed_data.json'
 import config from '../../../data/spk_app_config.json'
 import projectDetails from '../../../data/spk_project.json'
-
+import { prefixes } from '../user/utils/prefixes'
 // Config retrieval actions/functions
 
 export const FETCH_CONFIG = 'FETCH_CONFIG'
 export const FETCH_CONFIG_ERROR = 'FETCH_CONFIG_ERROR'
 export const FETCH_CONFIG_SUCCESS = 'FETCH_CONFIG_SUCCESS'
 
-export function fetchConfig() {
+export function fetchConfig(transform, dimensions) {
   return (dispatch, getState) => {
     dispatch({ type: FETCH_CONFIG })
     return Promise.resolve(config)
       .then(resp => {
         dispatch(fetchConfigSuccess(resp))
-        dispatch(fetchProject(resp.default))
         const outline = resp.projects[resp.default] || {}
         dispatch(selectProject(outline.id, outline.title, outline.lastUpdated))
+        dispatch(fetchProject(resp.default, transform, dimensions))
       })
       .catch(error => dispatch(fetchConfigError(error)))
   }
@@ -42,11 +42,16 @@ export const FETCH_PROJECT = 'FETCH_PROJECT'
 export const FETCH_PROJECT_ERROR = 'FETCH_PROJECT_ERROR'
 export const FETCH_PROJECT_SUCCESS = 'FETCH_PROJECT_SUCCESS'
 
-export function fetchProject(id) {
+export function fetchProject(id, transform, dimensions) {
   return (dispatch, getState) => {
     dispatch({ type: FETCH_PROJECT, id })
     return Promise.resolve(projectDetails)
-      .then(resp => dispatch(fetchProjectSuccess(id, resp)))
+      .then(resp => {
+        dispatch(fetchProjectSuccess(id, resp))
+        const searchPrefixes = prefixes(transform, dimensions, resp)
+        dispatch(transformComplete(transform, dimensions, searchPrefixes))
+        dispatch(fetchTiles(searchPrefixes))
+      })
       .catch(error => dispatch(fetchProjectError(id, error)))
   }
 }

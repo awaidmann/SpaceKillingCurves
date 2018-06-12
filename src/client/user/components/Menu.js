@@ -4,10 +4,6 @@ import ProjectDetails from './ProjectDetails'
 import { currentProject } from '../utils/currentProject'
 
 export default class Menu extends React.Component {
-  componentDidMount() {
-    this.props.onAppLoad()
-  }
-
   _projectsFromProps() {
     return this.props.config.config
       ? Object.values(this.props.config.config.projects)

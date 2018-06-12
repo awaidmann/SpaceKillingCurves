@@ -1,7 +1,7 @@
 import React from 'react'
 
 import TileLoaderCanvas from '../containers/TileLoaderCanvas'
-import AppConfigurationLoader from '../containers/AppConfigurationLoader'
+import UserSettings from '../containers/UserSettings'
 
 class App extends React.Component {
   constructor(props) {
@@ -9,13 +9,18 @@ class App extends React.Component {
     this.updateWindow = this.updateWindow.bind(this)
   }
 
+  _dimensions() {
+    return { width: window.innerWidth, height: window.innerHeight }
+  }
+
   updateWindow() {
-    this.props.onResize(window.innerWidth, window.innerHeight)
+    this.props.onResize(this._dimensions())
   }
 
   componentDidMount() {
     window.addEventListener('resize', this.updateWindow)
     this.updateWindow()
+    this.props.onAppLoad(this._dimensions())
   }
 
   componentWillUnmount() {
@@ -26,7 +31,7 @@ class App extends React.Component {
     return (
       <div>
         <div>
-          <AppConfigurationLoader className="menu" />
+          <UserSettings className="menu" />
         </div>
         <div>
           <TileLoaderCanvas />

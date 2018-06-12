@@ -1,7 +1,6 @@
 import { connect } from 'react-redux'
 
 import {
-  fetchConfig,
   fetchProject,
   selectProject
 } from '../../shared/actions'
@@ -10,20 +9,22 @@ import Menu from '../components/Menu'
 const mapStateToProps = state => state
 
 const mapDispatchToProps = dispatch => ({
-  onAppLoad: () => dispatch(fetchConfig()),
-  onSelectProject: (projects) => {
+  onSelectProject: (transform, dimensions, projects) => {
     return (id, title, lastUpdated) => {
       dispatch(selectProject(id, title, lastUpdated))
       projects[id]
         ? console.log('project: ' + id + ' already retrieved')
-        : dispatch(fetchProject(id))
+        : dispatch(fetchProject(id, transform, dimensions))
     }
   }
 })
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {
   return Object.assign({}, ownProps, stateProps, dispatchProps, {
-    onSelectProject: dispatchProps.onSelectProject(stateProps.project.projects)
+    onSelectProject: dispatchProps.onSelectProject(
+      stateProps.transform,
+      stateProps.dimensions,
+      stateProps.project.projects)
   })
 }
 
