@@ -1,5 +1,6 @@
 import {
-  SELECT_PROJECT
+  SELECT_PROJECT,
+  UPDATE_SETTINGS
 } from '../../shared/actions'
 
 const INITIAL_STATE = {
@@ -12,6 +13,8 @@ function settings(state = INITIAL_STATE, action) {
       return Object.assign({}, state, {
         project: { id: action.id, title: action.title, lastUpdated: action.lastUpdated }
       })
+    case UPDATE_SETTINGS:
+      return Object.assign({}, state, action.settings)
     default:
       return state
   }

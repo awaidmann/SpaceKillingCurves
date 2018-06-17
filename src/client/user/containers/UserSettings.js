@@ -2,7 +2,8 @@ import { connect } from 'react-redux'
 
 import {
   fetchProject,
-  selectProject
+  selectProject,
+  updateSettings
 } from '../../shared/actions'
 import Menu from '../components/Menu'
 
@@ -16,7 +17,8 @@ const mapDispatchToProps = dispatch => ({
         ? console.log('project: ' + id + ' already retrieved')
         : dispatch(fetchProject(id, transform, dimensions))
     }
-  }
+  },
+  onUpdateSettings: settings => dispatch(updateSettings(settings))
 })
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {

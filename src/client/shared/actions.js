@@ -110,3 +110,11 @@ export function fetchTilesError(prefix, error) {
 export function fetchTilesSuccess(prefix, tiles) {
   return { type: FETCH_TILES_SUCCESS, prefix, tiles }
 }
+
+
+// settings
+export const UPDATE_SETTINGS = 'UPDATE_SETTINGS'
+
+export function updateSettings(settings) {
+  return { type: UPDATE_SETTINGS, settings }
+}
