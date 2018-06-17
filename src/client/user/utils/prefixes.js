@@ -1,7 +1,9 @@
-import Geohash from '../../shared/geometry/Geohash'
-import Point from '../../shared/geometry/Point'
-import ViewRect from '../../shared/geometry/ViewRect'
-import { Morton } from '../../shared/geometry/curve'
+import {
+  Geohash,
+  Morton,
+  Point,
+  ViewRect
+} from '../geometry'
 
 function curveForProjectState(currentProject) {
   if (currentProject) {
