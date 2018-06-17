@@ -5,6 +5,7 @@ import { select, event as d3event } from 'd3-selection'
 import Draw from '../../shared/Draw'
 import { rectsForQuadrantPrefixes } from '../utils/prefixes'
 import { currentProject } from '../utils/currentProject'
+import { TILES_VISIBLE } from '../../shared/settings'
 
 class Canvas extends React.Component {
   constructor(props) {
@@ -40,6 +41,13 @@ class Canvas extends React.Component {
     )
   }
 
+  _drawingPipelineForSettings() {
+    return [
+      Draw.tiles(this._tilesFromProps()),
+      this.props.settings[TILES_VISIBLE] ? Draw.boundingRects(this._searchRectsFromProps()) : undefined
+    ]
+  }
+
   componentDidMount() {
     this.canvasSelection = select(this.canvasRef.current)
       .call(this.zoomBehavior
@@ -47,16 +55,16 @@ class Canvas extends React.Component {
         .on('end', this._handleEnd)
       )
     this.drawingCtx = new Draw(this.canvasRef.current.getContext('2d'))
-    this.drawingCtx.pipeline(
-      Draw.tiles(this._tilesFromProps()),
-      Draw.boundingRects(this._searchRectsFromProps())
+    this.drawingCtx.pipeline.apply(
+      this.drawingCtx,
+      this._drawingPipelineForSettings()
     )(this._windowRectFromProps())()
   }
 
   componentDidUpdate() {
-    this.drawingCtx.pipeline(
-      Draw.tiles(this._tilesFromProps()),
-      Draw.boundingRects(this._searchRectsFromProps())
+    this.drawingCtx.pipeline.apply(
+      this.drawingCtx,
+      this._drawingPipelineForSettings()
     )(this._windowRectFromProps())(this.props.transform)
   }
 

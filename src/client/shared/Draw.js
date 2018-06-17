@@ -38,7 +38,7 @@ class Draw {
             this.ctx.scale(transform.k, transform.k)
           }
 
-          partialDrawFns.forEach(fn => fn(this.ctx, this.style))
+          partialDrawFns.forEach(fn => fn && fn(this.ctx, this.style))
 
           this.ctx.restore()
         }
