@@ -2,7 +2,7 @@ import {
   SELECT_PROJECT,
   UPDATE_SETTINGS
 } from '../../shared/actions'
-import { PROJECT, DEFAULT_SETTINGS } from '../../shared/settings'
+import { PROJECT, DEFAULT_SETTINGS } from '../defaults/settings'
 
 function settings(state = DEFAULT_SETTINGS, action) {
   switch(action.type) {

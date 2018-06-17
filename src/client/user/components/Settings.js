@@ -1,6 +1,6 @@
 import React from 'react'
 
-import { TILES_VISIBLE } from '../../shared/settings'
+import { TILES_VISIBLE } from '../defaults/settings'
 
 export default class Settings extends React.Component {
   constructor(props) {
