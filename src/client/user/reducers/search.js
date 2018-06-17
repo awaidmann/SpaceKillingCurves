@@ -1,4 +1,4 @@
-import { TRANSFORM_COMPLETE } from '../../shared/actions'
+import { TRANSFORM_COMPLETE } from '../actions/transform'
 
 const INITIAL_STATE = {
   viewPrefixes: []

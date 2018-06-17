@@ -1,10 +1,7 @@
 import { connect } from 'react-redux'
 
-import {
-  fetchProject,
-  selectProject,
-  updateSettings
-} from '../../shared/actions'
+import { fetchProject } from '../actions/project'
+import { selectProject, updateSettings } from '../actions/settings'
 import Menu from '../components/Menu'
 
 const mapStateToProps = state => state

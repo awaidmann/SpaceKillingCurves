@@ -2,7 +2,7 @@ import {
   FETCH_CONFIG,
   FETCH_CONFIG_ERROR,
   FETCH_CONFIG_SUCCESS
-} from '../../shared/actions'
+} from '../actions/config'
 
 const INITIAL_STATE = {
   isFetching: false,

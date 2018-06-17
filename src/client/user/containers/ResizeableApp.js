@@ -2,12 +2,9 @@ import { connect } from 'react-redux'
 
 import { prefixes } from '../utils/prefixes'
 import { currentProject } from '../utils/currentProject'
-import {
-  resize,
-  transformComplete,
-  fetchConfig,
-  fetchTiles
-} from '../../shared/actions'
+import { resize, transformComplete } from '../actions/transform'
+import { fetchConfig } from '../actions/config'
+import { fetchTiles } from '../actions/tiles'
 import App from '../components/App'
 
 const mapStateToProps = state => state

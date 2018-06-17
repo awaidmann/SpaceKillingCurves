@@ -2,7 +2,8 @@ import { connect } from 'react-redux'
 
 import { prefixes } from '../utils/prefixes'
 import { currentProject } from '../utils/currentProject'
-import { transform, transformComplete, fetchTiles } from '../../shared/actions'
+import { transform, transformComplete } from '../actions/transform'
+import { fetchTiles } from '../actions/tiles'
 import Canvas from '../components/Canvas'
 
 const mapStateToProps = state => state

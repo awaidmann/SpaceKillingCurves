@@ -2,7 +2,7 @@ import {
   FETCH_TILES,
   FETCH_TILES_ERROR,
   FETCH_TILES_SUCCESS
-} from '../../shared/actions'
+} from '../actions/tiles'
 import QueryCache from '../utils/QueryCache'
 
 const INITIAL_STATE = {

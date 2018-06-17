@@ -2,7 +2,7 @@ import {
   FETCH_PROJECT,
   FETCH_PROJECT_ERROR,
   FETCH_PROJECT_SUCCESS
-} from '../../shared/actions'
+} from '../actions/project'
 
 const INITIAL_STATE = {
   fetching: undefined,

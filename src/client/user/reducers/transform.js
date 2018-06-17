@@ -1,4 +1,4 @@
-import { TRANSFORM } from '../../shared/actions'
+import { TRANSFORM } from '../actions/transform'
 
 const INITIAL_STATE = {
   x: 0,

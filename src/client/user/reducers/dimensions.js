@@ -1,4 +1,4 @@
-import { RESIZE } from '../../shared/actions'
+import { RESIZE } from '../actions/transform'
 
 const INITIAL_STATE = {
   width: 0,
