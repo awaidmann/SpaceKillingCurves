@@ -1,4 +1,4 @@
-import config from '../../../../data/spk_app_config.json'
+import config from '../../../data/spk_app_config.json'
 import { fetchProject } from './project'
 import { selectProject } from './settings'
 

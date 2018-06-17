@@ -1,4 +1,4 @@
-import projectDetails from '../../../../data/spk_project.json'
+import projectDetails from '../../../data/spk_project.json'
 import { prefixes } from '../utils/prefixes'
 import { transformComplete } from './transform'
 import { fetchTiles } from './tiles'

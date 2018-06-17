@@ -1,4 +1,4 @@
-import tiles from '../../../../data/spk_mixed_data.json'
+import tiles from '../../../data/spk_mixed_data.json'
 
 export const FETCH_TILES = 'FETCH_TILES'
 export const FETCH_TILES_ERROR = 'FETCH_TILES_ERROR'
