@@ -3,7 +3,7 @@ import {
   FETCH_TILES_ERROR,
   FETCH_TILES_SUCCESS
 } from '../../shared/actions'
-import QueryCache from '../../shared/QueryCache'
+import QueryCache from '../utils/QueryCache'
 
 const INITIAL_STATE = {
   pendingPrefixes: [],

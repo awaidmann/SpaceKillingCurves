@@ -2,7 +2,7 @@ import React from 'react'
 import { zoom } from 'd3-zoom'
 import { select, event as d3event } from 'd3-selection'
 
-import Draw from '../../shared/Draw'
+import Draw from '../utils/Draw'
 import { rectsForQuadrantPrefixes } from '../utils/prefixes'
 import { currentProject } from '../utils/currentProject'
 import { TILES_VISIBLE } from '../defaults/settings'
