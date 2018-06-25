@@ -6,6 +6,7 @@ import ResizeableApp from './containers/ResizeableApp'
 import store from './store'
 
 import 'bootstrap/dist/css/bootstrap-grid.min.css'
+import './style/main.css'
 
 render(
   <Provider store={store}>

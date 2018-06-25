@@ -6,11 +6,15 @@ import UserSettings from '../containers/UserSettings'
 class App extends React.Component {
   constructor(props) {
     super(props)
+    this.canvasRef = React.createRef()
     this.updateWindow = this.updateWindow.bind(this)
   }
 
   _dimensions() {
-    return { width: window.innerWidth, height: window.innerHeight }
+    return {
+      width: this.canvasRef.current.clientWidth,
+      height: this.canvasRef.current.clientHeight
+    }
   }
 
   updateWindow() {
@@ -29,12 +33,17 @@ class App extends React.Component {
 
   render() {
     return (
-      <div>
-        <div>
-          <UserSettings className="menu" />
-        </div>
-        <div>
-          <TileLoaderCanvas />
+      <div className="container-fluid app">
+        <div className="row">
+          <div className="col-sm-4">
+            <UserSettings />
+          </div>
+          <div
+            ref={this.canvasRef}
+            className="col-sm-8"
+          >
+            <TileLoaderCanvas />
+          </div>
         </div>
       </div>
     )
