@@ -35,12 +35,12 @@ class App extends React.Component {
     return (
       <div className="container-fluid app">
         <div className="row">
-          <div className="col-sm-4 col-lg-3">
+          <div className="col-md-4 col-lg-3">
             <UserSettings />
           </div>
           <div
             ref={this.canvasRef}
-            className="col-sm-8 col-lg-9"
+            className="col-md-8 col-lg-9"
           >
             <TileLoaderCanvas />
           </div>
