@@ -11,16 +11,16 @@ export default class Menu extends React.Component {
   }
 
   render() {
+    const current = currentProject(this.props.project, this.props.settings) || {}
     return (
       <div className="menu">
         <div className="submenu">
           <ProjectDetails
-            currentProject={
-              currentProject(this.props.project, this.props.settings) || {}
-            }
+            currentProject={current}
           />
           <ProjectList
             projectOutlines={this._outlinesFromProps()}
+            currentProject={current}
             onProjectSelect={this.props.onProjectSelect}
           />
         </div>
