@@ -1,7 +1,8 @@
 import {
   AUTHENTICATING,
   AUTHENTICATION_FAILURE,
-  AUTHENTICATION_SUCCESS
+  AUTHENTICATION_SUCCESS,
+  REVOKE_AUTHENTICATION
 } from '../actions/auth'
 
 const INITIAL_STATE = {
@@ -18,6 +19,8 @@ function auth(state = INITIAL_STATE, action) {
       return Object.assign({}, state, { isAuthenticating: false, error: action.error })
     case AUTHENTICATION_SUCCESS:
       return Object.assign({}, state, { isAuthenticating: false, authToken: action.authToken })
+    case REVOKE_AUTHENTICATION:
+      return INITIAL_STATE
     default:
       return state
   }
