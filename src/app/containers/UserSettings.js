@@ -1,7 +1,11 @@
 import { connect } from 'react-redux'
 
 import { fetchProject } from '../actions/project'
-import { selectProject, updateSettings } from '../actions/settings'
+import {
+  selectProject,
+  updateSettings,
+  toggleSubmenu
+} from '../actions/settings'
 import Menu from '../components/Menu'
 
 const mapStateToProps = state => state
@@ -15,7 +19,8 @@ const mapDispatchToProps = dispatch => ({
         : dispatch(fetchProject(id, transform, dimensions))
     }
   },
-  onUpdateSettings: settings => dispatch(updateSettings(settings))
+  onUpdateSettings: settings => dispatch(updateSettings(settings)),
+  onSubmenuToggle: submenu => dispatch(toggleSubmenu(submenu))
 })
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {

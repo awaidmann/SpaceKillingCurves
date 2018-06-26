@@ -16,11 +16,6 @@ canvas {
   padding: 8px;
 }
 
-.submenu {
-  padding-top: 4px;
-  padding-bottom: 4px;
-}
-
 @media (min-width: 768px) {
   .menu {
     border-right: 1px solid rgba(0,0,0,0.1);
@@ -32,4 +27,17 @@ canvas {
   .menu {
     border-bottom: 1px solid rgba(0,0,0,0.1);
   }
+}
+
+.submenu {
+  padding-top: 4px;
+  padding-bottom: 4px;
+  margin-bottom: 8px
+}
+
+.submenu-title {
+}
+
+.submenu-content {
+  padding-top: 16px;
 }
