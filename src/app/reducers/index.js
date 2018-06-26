@@ -1,5 +1,6 @@
 import { combineReducers } from 'redux'
 
+import auth from './auth'
 import config from './config'
 import settings from './settings'
 import tiles from './tiles'
@@ -9,6 +10,7 @@ import search from './search'
 import project from './project'
 
 export default combineReducers({
+  auth,
   config,
   settings,
   tiles,

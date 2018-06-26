@@ -6,6 +6,7 @@ import {
   updateSettings,
   toggleSubmenu
 } from '../actions/settings'
+import { authenticate } from '../actions/auth'
 import Menu from '../components/menu'
 
 const mapStateToProps = state => state
@@ -20,7 +21,8 @@ const mapDispatchToProps = dispatch => ({
     }
   },
   onUpdateSettings: settings => dispatch(updateSettings(settings)),
-  onSubmenuToggle: submenu => dispatch(toggleSubmenu(submenu))
+  onSubmenuToggle: submenu => dispatch(toggleSubmenu(submenu)),
+  onAuthenticate: credentials => dispatch(authenticate(credentials))
 })
 
 const mergeProps = (stateProps, dispatchProps, ownProps) => {

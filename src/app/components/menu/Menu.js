@@ -4,6 +4,7 @@ import Submenu from './Submenu'
 import ProjectDetails from './ProjectDetails'
 import ProjectList from './ProjectList'
 import Settings from './Settings'
+import Login from './Login'
 import { SUBMENUS } from '../../defaults/settings'
 import { currentProject } from '../../utils/currentProject'
 
@@ -45,6 +46,7 @@ export default class Menu extends React.Component {
           }
           onSubmenuToggle={this.props.onSubmenuToggle.bind(this, SETTINGS_TITLE)}
         />
+        <Login onAuthenticate={this.props.onAuthenticate} />
       </div>
     )
   }
