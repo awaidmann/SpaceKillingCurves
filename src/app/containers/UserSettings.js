@@ -6,7 +6,7 @@ import {
   updateSettings,
   toggleSubmenu
 } from '../actions/settings'
-import Menu from '../components/Menu'
+import Menu from '../components/menu'
 
 const mapStateToProps = state => state
 
