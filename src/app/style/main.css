@@ -1,7 +1,13 @@
 .app {
-  height: 100%
+  height: 100%;
+  width: 100%;
 }
 
 .app .row {
-  height: inherit
+  height: inherit;
+}
+
+canvas {
+  height: 100%;
+  width: 100%;
 }
