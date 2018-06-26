@@ -11,3 +11,25 @@ canvas {
   height: 100%;
   width: 100%;
 }
+
+.menu {
+  padding: 8px;
+}
+
+.submenu {
+  padding-top: 4px;
+  padding-bottom: 4px;
+}
+
+@media (min-width: 768px) {
+  .menu {
+    border-right: 1px solid rgba(0,0,0,0.1);
+    height: 100%;
+  }
+}
+
+@media (max-width: 768px) {
+  .menu {
+    border-bottom: 1px solid rgba(0,0,0,0.1);
+  }
+}

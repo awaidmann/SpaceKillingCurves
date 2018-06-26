@@ -12,8 +12,8 @@ export default class Menu extends React.Component {
 
   render() {
     return (
-      <div>
-        <div>
+      <div className="menu">
+        <div className="submenu">
           <ProjectDetails
             currentProject={
               currentProject(this.props.project, this.props.settings) || {}
@@ -24,7 +24,7 @@ export default class Menu extends React.Component {
             onProjectSelect={this.props.onProjectSelect}
           />
         </div>
-        <div>
+        <div className="submenu">
           <Settings
             settings={this.props.settings}
             onUpdateSettings={this.props.onUpdateSettings}
