@@ -1,10 +1,15 @@
 import { connect } from 'react-redux'
 
+import withZoomBehavior from '../components/hoc/withZoomBehavior'
+
 import { prefixes } from '../utils/prefixes'
 import { currentProject } from '../utils/currentProject'
 import { transform, transformComplete } from '../actions/transform'
 import { fetchTiles } from '../actions/tiles'
-import Canvas from '../components/Canvas'
+
+import Draw from '../utils/Draw'
+import { rectsForQuadrantPrefixes } from '../utils/prefixes'
+import { TILES_VISIBLE } from '../defaults/settings'
 
 const mapStateToProps = state => state
 
@@ -28,8 +33,27 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
   })
 }
 
+const pipelineForUpdate = (props) => {
+  return [
+    Draw.tiles(props.tiles.cache
+      .getFromKeys(props.search.viewPrefixes)),
+    props.settings[TILES_VISIBLE]
+      ? Draw.boundingRects(
+          rectsForQuadrantPrefixes(
+            props.search.viewPrefixes,
+            currentProject(props.project, props.settings)
+          ))
+      : undefined
+  ]
+}
+
+const shouldSetupMouseControls = () => -1
+
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
   mergeProps,
-)(Canvas)
+)(withZoomBehavior(
+  pipelineForUpdate,
+  shouldSetupMouseControls
+))
