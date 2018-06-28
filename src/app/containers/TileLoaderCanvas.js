@@ -1,14 +1,16 @@
 import { connect } from 'react-redux'
+import React from 'react'
 
+import with2DCanvas from '../components/hoc/with2DCanvas'
 import withZoomBehavior from '../components/hoc/withZoomBehavior'
 
-import { prefixes } from '../utils/prefixes'
+import Draw from '../utils/Draw'
+import { prefixes, rectsForQuadrantPrefixes } from '../utils/prefixes'
 import { currentProject } from '../utils/currentProject'
+
 import { transform, transformComplete } from '../actions/transform'
 import { fetchTiles } from '../actions/tiles'
 
-import Draw from '../utils/Draw'
-import { rectsForQuadrantPrefixes } from '../utils/prefixes'
 import { TILES_VISIBLE } from '../defaults/settings'
 
 const mapStateToProps = state => state
@@ -33,6 +35,8 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
   })
 }
 
+const canvasRef = React.createRef()
+
 const pipelineForUpdate = (props) => {
   return [
     Draw.tiles(props.tiles.cache
@@ -47,13 +51,21 @@ const pipelineForUpdate = (props) => {
   ]
 }
 
-const shouldSetupMouseControls = () => -1
-
 export default connect(
   mapStateToProps,
   mapDispatchToProps,
   mergeProps,
-)(withZoomBehavior(
-  pipelineForUpdate,
-  shouldSetupMouseControls
-))
+)(
+  withZoomBehavior(
+    canvasRef,
+    (props, transform) => props.onTransform(transform),
+    (props) => props.onTransformComplete()
+  )(
+    with2DCanvas(
+      canvasRef,
+      pipelineForUpdate
+    )(
+      function TileLoaderCanvas(props) {
+        return (<div>{ props.canvas }</div>)
+      }
+    )))
