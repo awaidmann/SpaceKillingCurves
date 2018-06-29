@@ -5,23 +5,21 @@ import { select, event as d3event } from 'd3-selection'
 export default function withZoomBehavior(
   canvasRef,
   onTransform,
-  onTransformComplete
+  onTransformComplete,
+  transformTo
 ) {
   return function(Component) {
     return class extends React.Component {
       constructor(props) {
         super(props)
         this.zoomBehavior = zoom()
-        this._handleZoom = this._handleZoom.bind(this)
-        this._handleZoomEnd = this._handleZoomEnd.bind(this)
-      }
 
-      _handleZoom() {
-        onTransform(this.props, d3event.transform)
-      }
-
-      _handleZoomEnd() {
-        onTransformComplete(this.props)
+        this._handleZoom = () => onTransform
+          ? onTransform(this.props, d3event)
+          : undefined
+        this._handleZoomEnd = () => onTransformComplete
+          ? onTransformComplete(this.props)
+          : undefined
       }
 
       componentDidMount() {
@@ -29,7 +27,14 @@ export default function withZoomBehavior(
           .call(this.zoomBehavior
             .on('zoom', this._handleZoom)
             .on('end', this._handleZoomEnd)
-        )
+          )
+      }
+
+      componentDidUpdate() {
+        const to = transformTo
+          ? transformTo(this.props)
+          : undefined
+        if (to) this.zoomBehavior.transform(canvasRef.current, to)
       }
 
       componentWillUnmount() {

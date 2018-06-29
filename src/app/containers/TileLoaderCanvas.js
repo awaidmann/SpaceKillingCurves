@@ -58,7 +58,7 @@ export default connect(
 )(
   withZoomBehavior(
     canvasRef,
-    (props, transform) => props.onTransform(transform),
+    (props, e) => props.onTransform(e.transform),
     (props) => props.onTransformComplete()
   )(
     with2DCanvas(
