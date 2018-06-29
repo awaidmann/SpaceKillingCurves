@@ -38,10 +38,8 @@ export default function withZoomBehavior(
       }
 
       componentWillUnmount() {
-        // TODO: tear down zoom()?
         select(canvasRef.current)
-          .on('zoom', null)
-          .on('end', null)
+          .on('.zoom', null)
       }
 
       render() {
