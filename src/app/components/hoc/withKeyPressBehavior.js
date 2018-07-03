@@ -33,8 +33,8 @@ export default function withKeyPressBehavior(
 
       componentWillUnmount() {
         selection()
-          .on('keyup', null)
-          .on('keydown', null)
+          .on('.keyup', null)
+          .on('.keydown', null)
       }
 
       render() {
