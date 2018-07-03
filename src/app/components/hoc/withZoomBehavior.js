@@ -1,5 +1,5 @@
 import React from 'react'
-import { zoom } from 'd3-zoom'
+import { zoom, zoomIdentity } from 'd3-zoom'
 import { select, event as d3event } from 'd3-selection'
 
 export default function withZoomBehavior(
@@ -30,16 +30,21 @@ export default function withZoomBehavior(
           )
       }
 
-      componentDidUpdate() {
+      componentDidUpdate(prevProps) {
         const to = transformTo
-          ? transformTo(this.props)
+          ? transformTo(this.props, prevProps)
           : undefined
-        if (to) this.zoomBehavior.transform(canvasRef.current, to)
+        if (to) {
+          select(canvasRef.current)
+            .call(this.zoomBehavior.transform,
+              zoomIdentity.translate(to.x, to.y).scale(to.k))
+        }
       }
 
       componentWillUnmount() {
         select(canvasRef.current)
           .on('.zoom', null)
+          .on('.end', null)
       }
 
       render() {
