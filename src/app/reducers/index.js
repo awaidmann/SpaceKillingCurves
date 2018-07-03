@@ -1,6 +1,7 @@
 import { combineReducers } from 'redux'
 
 import auth from './auth'
+import editor from './editor'
 import config from './config'
 import settings from './settings'
 import tiles from './tiles'
@@ -11,6 +12,7 @@ import project from './project'
 
 export default combineReducers({
   auth,
+  editor,
   config,
   settings,
   tiles,
