@@ -4,7 +4,7 @@ import {
 } from '../actions/editor'
 
 const INITIAL_STATE = {
-  isEditing: false
+  isEditing: true
 }
 
 function editor(state = INITIAL_STATE, action) {
