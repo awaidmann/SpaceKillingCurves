@@ -9,6 +9,7 @@ import transform from './transform'
 import dimensions from './dimensions'
 import search from './search'
 import project from './project'
+import path from './path'
 
 export default combineReducers({
   auth,
@@ -20,4 +21,5 @@ export default combineReducers({
   dimensions,
   project,
   search,
+  path,
 })
