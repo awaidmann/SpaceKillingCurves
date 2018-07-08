@@ -1,3 +1,5 @@
+import { clientPoint } from 'd3-selection'
+
 export default class Point {
   constructor(x, y) {
     this.x = x || 0
@@ -29,5 +31,12 @@ export default class Point {
     return new Point(
       this.x*(scaleX === undefined ? 1 : scaleX),
       this.y*(scaleY === undefined ? 1 : scaleY))
+  }
+
+  static fromEvent(container, event) {
+    if (container && event) {
+      const rawPoint = clientPoint(container, event.sourceEvent || event)
+      return rawPoint ? new Point(rawPoint[0], rawPoint[1]) : undefined
+    }
   }
 }
