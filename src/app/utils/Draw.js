@@ -12,6 +12,10 @@ export const DEFAULT_STYLE = {
   rect: {
     strokeStyle: "blue",
     fillStyle: "clear",
+  },
+  path: {
+    strokeStyle: "black",
+    fillStyle: "black",
   }
 }
 
@@ -104,6 +108,25 @@ class Draw {
         bezier.end.x, bezier.end.y
       )
       ctx.stroke()
+    }
+  }
+
+  static path(path) {
+    return (ctx, style) => {
+      if (ctx && style && path) {
+        const head = path.head()
+        if (head) {
+          const pathStyle = Object.assign({}, style.default, style.path)
+          ctx.lineWidth = pathStyle.lineWidth
+          ctx.strokeStyle = pathStyle.strokeStyle
+          ctx.fillStyle = pathStyle.fillStyle
+
+          ctx.beginPath()
+          ctx.moveTo(head.x, head.y)
+          path.tail().forEach(p => ctx.lineTo(p.x, p.y))
+          ctx.stroke()
+        }
+      }
     }
   }
 
