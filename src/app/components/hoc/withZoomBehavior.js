@@ -18,7 +18,7 @@ export default function withZoomBehavior(
           ? onTransform(this.props, d3event)
           : undefined
         this._handleZoomEnd = () => onTransformComplete
-          ? onTransformComplete(this.props)
+          ? onTransformComplete(this.props, d3event)
           : undefined
       }
 
