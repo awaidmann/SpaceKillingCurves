@@ -37,8 +37,7 @@ const mapDispatchToProps = dispatch => ({
   onPathAppend: (point) => dispatch(appendPath(point)),
   onPathEnd: (authToken, path, transform) => {
     return (point) => {
-      dispatch(endPath())
-      dispatch(savePath(path.add(point).invert(transform), authToken))
+      dispatch(endPath(path.add(point).invert(transform)))
     }
   }
 })
@@ -51,7 +50,7 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
       currentProject(stateProps.project, stateProps.settings)),
     onPathEnd: dispatchProps.onPathEnd(
       stateProps.auth.authToken,
-      stateProps.path,
+      stateProps.path.current,
       stateProps.transform),
   })
 }
@@ -67,7 +66,8 @@ const pipelineForUpdate = (props) => {
             currentProject(props.project, props.settings)
           ))
       : undefined,
-    Draw.path(props.path),
+    Draw.path(props.path.current.invert(props.transform)),
+    Draw.cubicBeziers(props.path.pending.reduce((acc, x) => acc.concat(x), []))
     // draw other admin stuff
   ]
 }

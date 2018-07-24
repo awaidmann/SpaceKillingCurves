@@ -41,4 +41,15 @@ export default class Path {
   forEach(fn) {
     this._points.forEach(p => fn(this._transformFn(p)))
   }
+
+  sample(n) {
+    const max = this._points.size
+    return new Path(
+      this._points.filter((p, i) => (i%n === 0 || i === max)),
+      this._transformFn)
+  }
+
+  toArray() {
+    return this._points.map(this._transformFn).toArray()
+  }
 }
