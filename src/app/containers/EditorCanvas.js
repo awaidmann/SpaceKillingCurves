@@ -1,11 +1,8 @@
 import { connect } from 'react-redux'
-import { compose } from 'redux'
 import React from 'react'
-import { selection } from 'd3-selection'
 
 import with2DCanvas from '../components/hoc/with2DCanvas'
 import withZoomBehavior from '../components/hoc/withZoomBehavior'
-import withKeyPressBehavior from '../components/hoc/withKeyPressBehavior'
 
 import Draw from '../utils/Draw'
 import { prefixes, rectsForQuadrantPrefixes } from '../utils/prefixes'
@@ -14,8 +11,7 @@ import { Point } from '../geometry'
 
 import { transform, transformComplete } from '../actions/transform'
 import { fetchTiles } from '../actions/tiles'
-import { beginEditMode, endEditMode } from '../actions/editor'
-import { appendPath, endPath, savePath } from '../actions/path'
+import { appendPath, endPath } from '../actions/path'
 
 import { TILES_VISIBLE } from '../defaults/settings'
 
@@ -31,11 +27,8 @@ const mapDispatchToProps = dispatch => ({
     }
   },
 
-  onEditModeBegin: () => dispatch(beginEditMode()),
-  onEditModeEnd: () => dispatch(endEditMode()),
-
   onPathAppend: (point) => dispatch(appendPath(point)),
-  onPathEnd: (authToken, path, transform) => {
+  onPathEnd: (path, transform) => {
     return (point) => {
       dispatch(endPath(path.add(point).invert(transform)))
     }
@@ -49,7 +42,6 @@ const mergeProps = (stateProps, dispatchProps, ownProps) => {
       stateProps.dimensions,
       currentProject(stateProps.project, stateProps.settings)),
     onPathEnd: dispatchProps.onPathEnd(
-      stateProps.auth.authToken,
       stateProps.path.current,
       stateProps.transform),
   })
@@ -79,36 +71,31 @@ export default connect(
   mapDispatchToProps,
   mergeProps,
 )(
-  withKeyPressBehavior(
-    (props, e) => props.onEditModeEnd(),
-    (props, e) => props.onEditModeBegin(),
-    (props, e) => e.key === 'Meta' // cmd
-  )(
-    withZoomBehavior(
-      canvasRef,
-      (props, e) => {
-        if (props.editor.isEditing) {
-          props.onPathAppend(Point.fromEvent(canvasRef.current, e))
-        } else {
-          props.onTransform(e.transform)
-        }},
-      (props, e) => {
-        if (props.editor.isEditing) {
-          props.onPathEnd(Point.fromEvent(canvasRef.current, e))
-        } else {
-          props.onTransformComplete()
-        }
-      },
-      (props, prevProps) => {
-        if (!props.editor.isEditing && prevProps.editor.isEditing) {
-          return props.transform
-        }
+  withZoomBehavior(
+    canvasRef,
+    (props, e) => {
+      if (props.editor.isEditing) {
+        props.onPathAppend(Point.fromEvent(canvasRef.current, e))
+      } else {
+        props.onTransform(e.transform)
+      }},
+    (props, e) => {
+      if (props.editor.isEditing) {
+        props.onPathEnd(Point.fromEvent(canvasRef.current, e))
+      } else {
+        props.onTransformComplete()
       }
-    )(
-      with2DCanvas(
-        canvasRef,
-        pipelineForUpdate
-      )(function EditorCanvas(props) {
-          return (<div>{ props.canvas }</div>)
-        }
-      ))))
+    },
+    (props, prevProps) => {
+      if (!props.editor.isEditing && prevProps.editor.isEditing) {
+        return props.transform
+      }
+    }
+  )(
+    with2DCanvas(
+      canvasRef,
+      pipelineForUpdate
+    )(function EditorCanvas(props) {
+        return (<div>{ props.canvas }</div>)
+      }
+    )))
