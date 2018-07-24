@@ -2,7 +2,9 @@ import { List } from 'immutable'
 import {
   PATH_APPEND,
   PATH_END,
-  PATH_SAVE
+  BUFFERED_PATHS_SAVE,
+  BUFFERED_PATHS_SAVE_ERROR,
+  BUFFERED_PATHS_SAVE_SUCCESS
 } from '../actions/path'
 import { Path } from '../geometry'
 
@@ -22,7 +24,9 @@ export default function path(state = INITIAL_STATE, action) {
         current: new Path(),
         pending: state.pending.push(action.processed)
       })
-    case PATH_SAVE:
+    case BUFFERED_PATHS_SAVE:
+    case BUFFERED_PATHS_SAVE_ERROR:
+    case BUFFERED_PATHS_SAVE_SUCCESS:
     default:
       return state
   }

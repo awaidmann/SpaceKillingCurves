@@ -3,24 +3,25 @@ import React from 'react'
 import { selection, event as d3event } from 'd3-selection'
 
 import { beginEditMode, endEditMode } from '../actions/editor'
+import { saveBufferedPaths } from '../actions/path'
 
 class KeyPressManager extends React.Component {
-  constructor(props) {
-    super(props)
+  _handleKeyUp() {
+    if (d3event.key === 'Meta') this.props.onEditModeBegin()
+  }
 
-    this._handleKeyUp = () => {
-      if (d3event.key === 'Meta') props.onEditModeBegin()
-    }
-
-    this._handleKeyDown = () => {
-      if (d3event.key === 'Meta') props.onEditModeEnd()
+  _handleKeyDown() {
+    if (d3event.key === 'Meta') this.props.onEditModeEnd()
+    else if (d3event.key === 's' && d3event.metaKey) {
+      d3event.preventDefault()
+      this.props.onSaveBuffered(this.props.auth.authToken, this.props.path.pending)
     }
   }
 
   componentDidMount() {
     selection()
-      .on('keyup', this._handleKeyUp)
-      .on('keydown', this._handleKeyDown)
+      .on('keyup', this._handleKeyUp.bind(this))
+      .on('keydown', this._handleKeyDown.bind(this))
   }
 
   componentWillUnmount() {
@@ -39,6 +40,7 @@ const mapStateToProps = state => state
 const mapDispatchToProps = dispatch => ({
   onEditModeBegin: () => dispatch(beginEditMode()),
   onEditModeEnd: () => dispatch(endEditMode()),
+  onSaveBuffered: (authToken, buffered) => dispatch(saveBufferedPaths(authToken, buffered)),
 })
 
 export default connect(
