@@ -1,6 +1,8 @@
 import React from 'react'
 
 import TileLoaderCanvas from '../containers/TileLoaderCanvas'
+import EditorCanvas from '../containers/EditorCanvas'
+import KeyPressManager from '../containers/KeyPressManager'
 import UserSettings from '../containers/UserSettings'
 
 class App extends React.Component {
@@ -32,6 +34,10 @@ class App extends React.Component {
   }
 
   render() {
+    const canvas = this.props.auth.authToken
+      ? (<div><EditorCanvas /><KeyPressManager /></div>)
+      : <TileLoaderCanvas />
+
     return (
       <div className="container-fluid app">
         <div className="row">
@@ -42,7 +48,7 @@ class App extends React.Component {
             ref={this.canvasRef}
             className="col-md-8 col-lg-9"
           >
-            <TileLoaderCanvas />
+          {canvas}
           </div>
         </div>
       </div>
